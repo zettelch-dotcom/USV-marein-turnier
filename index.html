@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USV St. Marein U14 – Turnierplan</title>
+  <style>
+    :root {
+      color-scheme: light;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      color: #222;
+    }
+    header {
+      background: #1b4b8f;
+      color: #fff;
+      padding: 1.5rem 1rem;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    header p {
+      margin: 0.25rem 0 0;
+      opacity: 0.9;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 1.5rem auto 2rem;
+      padding: 0 1rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 0.9rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1.2rem;
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+    }
+    .config-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.75rem 1.5rem;
+      align-items: center;
+    }
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    select, input[type="text"], input[type="number"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.35rem 0.5rem;
+      border-radius: 0.45rem;
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+    }
+    input[type="number"] {
+      max-width: 3.5rem;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th, td {
+      padding: 0.35rem 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      vertical-align: middle;
+    }
+    th {
+      background: #f0f4fb;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    tr:nth-child(even) td {
+      background: #fafafa;
+    }
+    .small-note {
+      font-size: 0.8rem;
+      color: #555;
+      margin-top: 0.5rem;
+    }
+    .team-inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.5rem 1rem;
+      margin-top: 0.5rem;
+    }
+    .team-inputs label {
+      font-weight: 500;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      background: #e3ecff;
+      color: #1b4b8f;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .round-cell {
+      white-space: nowrap;
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+    @media (max-width: 700px) {
+      header h1 {
+        font-size: 1.4rem;
+      }
+      table {
+        font-size: 0.78rem;
+      }
+      th, td {
+        padding: 0.3rem 0.35rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>USV St. Marein U14 – Turnierplan</h1>
+  <p>Interaktiver Spielplan & Tabelle für 3–6 Teams (Hin- &amp; Rückrunde)</p>
+</header>
+
+<div class="container">
+  <!-- Einstellungen -->
+  <div class="card">
+    <h2>Einstellungen</h2>
+    <div class="config-grid">
+      <div>
+        <label for="teamCount">Anzahl Teams</label>
+        <select id="teamCount">
+          <option value="3">3 Teams</option>
+          <option value="4">4 Teams</option>
+          <option value="5">5 Teams</option>
+          <option value="6">6 Teams</option>
+        </select>
+      </div>
+      <div>
+        <span class="badge">Hin- &amp; Rückrunde</span>
+        <p class="small-note">
+          Spielplan wird automatisch erzeugt. Punkte: Sieg 3, Remis 1, Niederlage 0.
+        </p>
+      </div>
+    </div>
+
+    <div style="margin-top: 0.75rem;">
+      <label>Mannschaftsnamen</label>
+      <div id="teamInputs" class="team-inputs">
+        <!-- Team-Eingabefelder werden per JS erzeugt -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Spielplan -->
+  <div class="card">
+    <h2>Spielplan</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Spiel</th>
+          <th>Mannschaft A</th>
+          <th></th>
+          <th>Mannschaft B</th>
+          <th>Runde</th>
+          <th style="text-align:center;">Tore A</th>
+          <th style="text-align:center;">Tore B</th>
+        </tr>
+      </thead>
+      <tbody id="matchesBody">
+        <!-- Spiele werden per JS erzeugt -->
+      </tbody>
+    </table>
+    <p class="small-note">
+      Trage nur Tore ein, wenn das Spiel wirklich gespielt wurde – dann wird es in der Tabelle gewertet.
+    </p>
+  </div>
+
+  <!-- Tabelle -->
+  <div class="card">
+    <h2>Tabelle</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Platz</th>
+          <th>Mannschaft</th>
+          <th>Spiele</th>
+          <th>S</th>
+          <th>U</th>
+          <th>N</th>
+          <th>Tore +</th>
+          <th>Tore -</th>
+          <th>Diff</th>
+          <th>Punkte</th>
+        </tr>
+      </thead>
+      <tbody id="standingsBody">
+        <!-- Tabelle wird per JS berechnet -->
+      </tbody>
+    </table>
+    <p class="small-note">
+      Struktur und Wertung orientieren sich an deinen Excel-Vorlagen (USV St. Marein U14 – Hin- &amp; Rückrunde).
+    </p>
+  </div>
+</div>
+
+<script>
+  // --- Grunddaten / State ---
+  let teamCount = 3;
+  let teamNames = [];
+  let matches = []; // {id, teamA, teamB, round, goalsA, goalsB}
+
+  function init() {
+    const teamCountSelect = document.getElementById("teamCount");
+    teamCountSelect.value = String(teamCount);
+
+    teamCountSelect.addEventListener("change", () => {
+      teamCount = parseInt(teamCountSelect.value, 10);
+      buildTeamInputs();
+      buildMatches();
+      updateStandings();
+    });
+
+    buildTeamInputs();
+    buildMatches();
+    updateStandings();
+  }
+
+  // --- Team-Eingaben ---
+  function buildTeamInputs() {
+    const container = document.getElementById("teamInputs");
+    container.innerHTML = "";
+    const oldNames = teamNames.slice();
+
+    teamNames = [];
+    for (let i = 0; i < teamCount; i++) {
+      const defaultName = oldNames[i] || `Team ${i + 1}`;
+      teamNames.push(defaultName);
+
+      const wrapper = document.createElement("div");
+      const label = document.createElement("label");
+      label.textContent = `Team ${i + 1}`;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = defaultName;
+      input.dataset.teamIndex = i;
+
+      input.addEventListener("input", (e) => {
+        const idx = parseInt(e.target.dataset.teamIndex, 10);
+        teamNames[idx] = e.target.value.trim() || `Team ${idx + 1}`;
+        renderMatches();    // Namen im Spielplan aktualisieren
+        updateStandings();  // Namen in der Tabelle aktualisieren
+      });
+
+      wrapper.appendChild(label);
+      wrapper.appendChild(input);
+      container.appendChild(wrapper);
+    }
+  }
+
+  // --- Spielplan (Double Round Robin) ---
+  function buildMatches() {
+    matches = [];
+    let idCounter = 1;
+
+    // Hinrunde: i < j
+    for (let i = 0; i < teamCount; i++) {
+      for (let j = i + 1; j < teamCount; j++) {
+        matches.push({
+          id: idCounter++,
+          teamA: i,
+          teamB: j,
+          round: "Hinrunde",
+          goalsA: null,
+          goalsB: null
+        });
+      }
+    }
+
+    // Rückrunde: gleiche Paarung, Heimrecht getauscht
+    for (let i = 0; i < teamCount; i++) {
+      for (let j = i + 1; j < teamCount; j++) {
+        matches.push({
+          id: idCounter++,
+          teamA: j,
+          teamB: i,
+          round: "Rückrunde",
+          goalsA: null,
+          goalsB: null
+        });
+      }
+    }
+
+    renderMatches();
+  }
+
+  function renderMatches() {
+    const tbody = document.getElementById("matchesBody");
+    tbody.innerHTML = "";
+
+    matches.forEach((m, index) => {
+      const row = document.createElement("tr");
+
+      const cellGame = document.createElement("td");
+      cellGame.textContent = index + 1;
+
+      const cellA = document.createElement("td");
+      cellA.textContent = teamNames[m.teamA] || `Team ${m.teamA + 1}`;
+
+      const cellVs = document.createElement("td");
+      cellVs.textContent = "vs";
+
+      const cellB = document.createElement("td");
+      cellB.textContent = teamNames[m.teamB] || `Team ${m.teamB + 1}`;
+
+      const cellRound = document.createElement("td");
+      cellRound.className = "round-cell";
+      cellRound.textContent = m.round;
+
+      const cellGoalsA = document.createElement("td");
+      cellGoalsA.style.textAlign = "center";
+      const inputA = document.createElement("input");
+      inputA.type = "number";
+      inputA.min = "0";
+      inputA.dataset.matchId = m.id;
+      inputA.dataset.field = "A";
+      inputA.value = m.goalsA != null ? m.goalsA : "";
+      inputA.addEventListener("input", onScoreChange);
+      cellGoalsA.appendChild(inputA);
+
+      const cellGoalsB = document.createElement("td");
+      cellGoalsB.style.textAlign = "center";
+      const inputB = document.createElement("input");
+      inputB.type = "number";
+      inputB.min = "0";
+      inputB.dataset.matchId = m.id;
+      inputB.dataset.field = "B";
+      inputB.value = m.goalsB != null ? m.goalsB : "";
+      inputB.addEventListener("input", onScoreChange);
+      cellGoalsB.appendChild(inputB);
+
+      row.appendChild(cellGame);
+      row.appendChild(cellA);
+      row.appendChild(cellVs);
+      row.appendChild(cellB);
+      row.appendChild(cellRound);
+      row.appendChild(cellGoalsA);
+      row.appendChild(cellGoalsB);
+
+      tbody.appendChild(row);
+    });
+  }
+
+  // --- Toreingabe ---
+  function onScoreChange(e) {
+    const matchId = parseInt(e.target.dataset.matchId, 10);
+    const field = e.target.dataset.field; // "A" oder "B"
+    const value = e.target.value;
+    const goals = value === "" ? null : Math.max(0, parseInt(value, 10));
+
+    const match = matches.find(m => m.id === matchId);
+    if (!match) return;
+
+    if (field === "A") {
+      match.goalsA = isNaN(goals) ? null : goals;
+    } else {
+      match.goalsB = isNaN(goals) ? null : goals;
+    }
+
+    updateStandings();
+  }
+
+  // --- Tabelle berechnen ---
+  function updateStandings() {
+    // Grundwerte pro Team
+    const stats = [];
+    for (let i = 0; i < teamCount; i++) {
+      stats.push({
+        teamIndex: i,
+        name: teamNames[i] || `Team ${i + 1}`,
+        games: 0,
+        wins: 0,
+        draws: 0,
+        losses: 0,
+        goalsFor: 0,
+        goalsAgainst: 0,
+        points: 0
+      });
+    }
+
+    // Alle gewerteten Spiele durchgehen
+    matches.forEach(m => {
+      if (m.goalsA == null || m.goalsB == null || isNaN(m.goalsA) || isNaN(m.goalsB)) {
+        return; // Spiel wird nur gewertet, wenn beide Ergebnisse vorhanden sind
+      }
+
+      const teamA = stats[m.teamA];
+      const teamB = stats[m.teamB];
+
+      teamA.games++;
+      teamB.games++;
+
+      teamA.goalsFor += m.goalsA;
+      teamA.goalsAgainst += m.goalsB;
+
+      teamB.goalsFor += m.goalsB;
+      teamB.goalsAgainst += m.goalsA;
+
+      if (m.goalsA > m.goalsB) {
+        teamA.wins++;
+        teamB.losses++;
+        teamA.points += 3;
+      } else if (m.goalsA < m.goalsB) {
+        teamB.wins++;
+        teamA.losses++;
+        teamB.points += 3;
+      } else {
+        teamA.draws++;
+        teamB.draws++;
+        teamA.points += 1;
+        teamB.points += 1;
+      }
+    });
+
+    // Sortierung: Punkte, Diff, Tore+, Name
+    stats.sort((a, b) => {
+      if (b.points !== a.points) return b.points - a.points;
+      const diffA = a.goalsFor - a.goalsAgainst;
+      const diffB = b.goalsFor - b.goalsAgainst;
+      if (diffB !== diffA) return diffB - diffA;
+      if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+      return a.name.localeCompare(b.name, "de");
+    });
+
+    // Tabelle rendern
+    const tbody = document.getElementById("standingsBody");
+    tbody.innerHTML = "";
+
+    stats.forEach((s, index) => {
+      const row = document.createElement("tr");
+
+      const diff = s.goalsFor - s.goalsAgainst;
+
+      const cells = [
+        index + 1,
+        s.name,
+        s.games,
+        s.wins,
+        s.draws,
+        s.losses,
+        s.goalsFor,
+        s.goalsAgainst,
+        diff,
+        s.points
+      ];
+
+      cells.forEach(val => {
+        const td = document.createElement("td");
+        td.textContent = val;
+        row.appendChild(td);
+      });
+
+      tbody.appendChild(row);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
