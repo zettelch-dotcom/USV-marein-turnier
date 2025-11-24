@@ -1,168 +1,65 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>USV St. Marein U14 – Turnierplan</title>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f5f5f5;
-      color: #222;
-    }
-
-    /* ----- HEADER: Logo links, Text mittig, Mannschaftsfoto rechts, alles zentriert ----- */
-    header {
-      background: #1b4b8f;
-      padding: 20px 10px;
-      color: white;
-      display: flex;
-      justify-content: center; /* zentriert gesamte Gruppe */
-    }
-
-    .header-center {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      max-width: 1100px;
-    }
-
-    header .logo {
-      height: 100px;
-      width: auto;
-      border-radius: 50%;
-      background: white;
-      padding: 6px;
-      flex-shrink: 0;
-    }
-
-    .header-text {
-      text-align: center;
-    }
-
-    .header-text h1 {
-      margin: 0;
-      font-size: 1.7rem;
-    }
-
-    .header-text p {
-      margin: 6px 0 0 0;
-      font-size: 1rem;
-      opacity: 0.9;
-    }
-
-    .header-photo {
-      height: 110px;
-      width: auto;
-      border-radius: 8px;
-      object-fit: cover;
-      flex-shrink: 0;
-    }
-
-    /* Für kleine Bildschirme: untereinander anordnen */
-    @media (max-width: 700px) {
-      .header-center {
-        flex-direction: column;
-      }
-      .header-text {
-        text-align: center;
-      }
-    }
-
-    /* ----- LAYOUT ----- */
-    .container {
-      max-width: 1100px;
-      margin: 20px auto;
-      padding: 0 10px;
-    }
-
-    .card {
-      background: #fff;
-      padding: 16px;
-      border-radius: 10px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    select, input {
-      padding: 6px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 100%;
-      margin-bottom: 10px;
-      box-sizing: border-box;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 5px;
-    }
-
-    th, td {
-      border-bottom: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-
-    th {
-      background: #eaeffd;
-      font-weight: bold;
-    }
-
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 10px;
-    }
-
-    .score-input {
-      width: 50px;
-      text-align: center;
-    }
-
-    .round {
-      font-size: 0.8rem;
-      opacity: 0.7;
-      white-space: nowrap;
-    }
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>USV St. Marein U14 – Turnierplan</title>
+<style>
+body{margin:0;font-family:Arial;background:#f5f5f5;overflow-x:hidden}
+#intro{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;animation:introFade 6s ease-out forwards}
+#intro img{width:70%;opacity:0;animation:ballIn 2.5s ease-out forwards .3s}
+#introText{margin-top:20px;color:#fff;font-size:2.2rem;font-weight:bold;opacity:0;text-shadow:0 0 12px #fff;animation:textIn 2.5s ease-out forwards 1.2s;text-align:center}
+@keyframes ballIn{0%{opacity:0;transform:scale(.95)}100%{opacity:1;transform:scale(1)}}
+@keyframes textIn{0%{opacity:0;transform:translateY(15px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes introFade{0%{opacity:1}100%{opacity:0;visibility:hidden}}
+#main{opacity:0;display:none;transition:opacity 3s ease}
+header{background:#1b4b8f;padding:20px 10px;color:#fff;display:flex;justify-content:center}
+.header-center{display:flex;align-items:center;gap:20px;max-width:1100px}
+.logo-wrapper{border-radius:50%;animation:glow 3s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 18px rgba(255,255,255,.9)}}
+.logo-wrapper img{height:100px}
+.header-photo{height:110px;border-radius:8px}
+.header-text{text-align:center}
+.header-text h1{margin:0;font-size:1.7rem}
+.header-text p{margin:6px 0 0;opacity:.9}
+.container{max-width:1100px;margin:20px auto;padding:0 10px}
+.card{background:#fff;padding:16px;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,.1);margin-bottom:20px}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+table{width:100%;border-collapse:collapse}
+th,td{border-bottom:1px solid #ddd;padding:8px}
+th{background:#eaeffd}
+.score-input{width:50px;text-align:center}
+.round{font-size:.8rem;opacity:.7}
+.winner-box{display:none;background:linear-gradient(90deg,#1b4b8f,#2f6ed1);color:#fff;padding:8px 14px;border-radius:999px;margin-bottom:10px;align-items:center;gap:8px}
+.leader-row{position:relative;background:rgba(27,75,143,.06);overflow:hidden}
+.leader-row::before{content:"";position:absolute;top:0;left:-40%;width:40%;height:100%;background:linear-gradient(120deg,rgba(255,255,255,0),rgba(255,255,255,.9),rgba(255,255,255,0));animation:shimmer 2.5s ease-in-out infinite}
+@keyframes shimmer{0%{transform:translateX(-120%)}100%{transform:translateX(300%)}}
+.qr-wrapper{display:flex;gap:16px;align-items:center}
+.qr-wrapper img{width:150px;height:150px;border:1px solid #ddd;border-radius:12px}
+</style>
 </head>
-
 <body>
+<div id="intro">
+  <img src="ball_intro_c3.png" alt="Intro Ball">
+  <div id="introText">USV St. Marein U14<br>Turnier 2025</div>
+</div>
 
-<!-- ---------- HEADER: Logo links, Text, Mannschaftsfoto rechts ---------- -->
+<div id="main">
 <header>
   <div class="header-center">
-    <img src="logo.png" alt="USV St. Marein Logo" class="logo">
+    <div class="logo-wrapper"><img src="logo.png" alt="Logo"></div>
     <div class="header-text">
-      <h1>USV St. Marein U14 – Interaktiver Turnierplan</h1>
-      <p>Für 3–6 Teams • Hin- & Rückrunde • Automatische Tabelle</p>
+      <h1>USV St. Marein – Interaktiver Turnierplan</h1>
+      <p>3–6 Teams • Hin- & Rückrunde • Live Tabelle</p>
     </div>
-    <img src="foto1.png" alt="Mannschaftsfoto USV St. Marein U14" class="header-photo">
+    <img src="foto1.png" class="header-photo" alt="Teamfoto">
   </div>
 </header>
 
 <div class="container">
-
   <div class="card">
     <h2>Einstellungen</h2>
-    <label for="teamCount">Anzahl Teams</label>
-    <select id="teamCount">
-      <option value="3">3 Teams</option>
-      <option value="4">4 Teams</option>
-      <option value="5">5 Teams</option>
-      <option value="6">6 Teams</option>
-    </select>
-
+    <label>Anzahl Teams</label>
+    <select id="teamCount"><option value="3">3 Teams</option><option value="4">4 Teams</option><option value="5">5 Teams</option><option value="6">6 Teams</option></select>
     <h3>Mannschaftsnamen</h3>
     <div id="teamInputs" class="team-grid"></div>
   </div>
@@ -170,241 +67,123 @@
   <div class="card">
     <h2>Spielplan</h2>
     <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Team A</th>
-          <th></th>
-          <th>Team B</th>
-          <th>Runde</th>
-          <th>Tore A</th>
-          <th>Tore B</th>
-        </tr>
-      </thead>
+      <thead><tr><th>#</th><th>Team A</th><th></th><th>Team B</th><th>Runde</th><th>A</th><th>B</th></tr></thead>
       <tbody id="matchesBody"></tbody>
     </table>
   </div>
 
   <div class="card">
     <h2>Tabelle</h2>
+    <div id="winnerBox" class="winner-box"></div>
     <table>
-      <thead>
-        <tr>
-          <th>Platz</th>
-          <th>Team</th>
-          <th>Sp</th>
-          <th>S</th>
-          <th>U</th>
-          <th>N</th>
-          <th>T+</th>
-          <th>T-</th>
-          <th>Diff</th>
-          <th>Pkt</th>
-        </tr>
-      </thead>
+      <thead><tr><th>P</th><th>Team</th><th>Team</th><th>Sp</th><th>S</th><th>U</th><th>N</th><th>T+</th><th>T-</th><th>D</th><th>Pkt</th></tr></thead>
       <tbody id="standingsBody"></tbody>
     </table>
   </div>
 
+  <div class="card">
+    <h2>Live-Ansicht per QR-Code</h2>
+    <div class="qr-wrapper">
+      <img id="qrImage" alt="QR-Code">
+      <div>QR mit Handy scannen → Live-Ansicht der Seite öffnen.</div>
+    </div>
+  </div>
+</div>
 </div>
 
 <script>
-let teamCount = 3;
-let teamNames = [];
-let matches = [];
+let teamCount=3,teamNames=[],matches=[];
 
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("teamCount").addEventListener("change", updateTeamCount);
+window.onload=function(){
+  setTimeout(function(){
+    const m=document.getElementById("main");
+    m.style.display="block";
+    requestAnimationFrame(()=>m.style.opacity=1);
+  },6000);
+};
+
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("qrImage").src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="+encodeURIComponent(location.href);
+  document.getElementById("teamCount").addEventListener("change",updateTeamCount);
   updateTeamCount();
 });
 
-function updateTeamCount() {
-  teamCount = parseInt(document.getElementById("teamCount").value);
-  buildTeamInputs();
-  buildMatches();
-  updateStandings();
+function updateTeamCount(){
+  teamCount=parseInt(document.getElementById("teamCount").value);
+  buildInputs();buildMatches();updateTable();
 }
 
-function buildTeamInputs() {
-  const container = document.getElementById("teamInputs");
-  container.innerHTML = "";
-  teamNames = [];
-
-  for (let i = 0; i < teamCount; i++) {
-    const name = "Team " + (i + 1);
-    teamNames.push(name);
-
-    const input = document.createElement("input");
-    input.value = name;
-    input.setAttribute("data-id", i);
-
-    input.addEventListener("input", function (e) {
-      const idx = parseInt(e.target.getAttribute("data-id"), 10);
-      teamNames[idx] = e.target.value || ("Team " + (idx + 1));
-      renderMatches();
-      updateStandings();
-    });
-
-    container.appendChild(input);
+function buildInputs(){
+  const box=document.getElementById("teamInputs");box.innerHTML="";teamNames=[];
+  for(let i=0;i<teamCount;i++){
+    let n="Team "+(i+1);teamNames.push(n);
+    let inp=document.createElement("input");inp.value=n;inp.dataset.id=i;
+    inp.oninput=e=>{teamNames[i]=e.target.value||("Team "+(i+1));renderMatches();updateTable();};
+    box.appendChild(inp);
   }
 }
 
-function buildMatches() {
-  matches = [];
-  let id = 1;
-
-  for (let a = 0; a < teamCount; a++) {
-    for (let b = a + 1; b < teamCount; b++) {
-      matches.push({ id: id++, A: a, B: b, round: "Hinrunde", gA: null, gB: null });
-    }
-  }
-
-  for (let a = 0; a < teamCount; a++) {
-    for (let b = a + 1; b < teamCount; b++) {
-      matches.push({ id: id++, A: b, B: a, round: "Rückrunde", gA: null, gB: null });
-    }
-  }
-
+function buildMatches(){
+  matches=[];let id=1;
+  for(let a=0;a<teamCount;a++)for(let b=a+1;b<teamCount;b++)
+    matches.push({id:id++,A:a,B:b,round:"Hinrunde",gA:null,gB:null});
+  for(let a=0;a<teamCount;a++)for(let b=a+1;b<teamCount;b++)
+    matches.push({id:id++,A:b,B:a,round:"Rückrunde",gA:null,gB:null});
   renderMatches();
 }
 
-function renderMatches() {
-  const tbody = document.getElementById("matchesBody");
-  tbody.innerHTML = "";
-
-  matches.forEach(function (m, index) {
-    const tr = document.createElement("tr");
-
-    function addCell(text) {
-      const td = document.createElement("td");
-      td.textContent = text;
-      tr.appendChild(td);
-    }
-
-    addCell(index + 1);
-    addCell(teamNames[m.A]);
-    addCell("vs");
-    addCell(teamNames[m.B]);
-
-    const roundCell = document.createElement("td");
-    roundCell.className = "round";
-    roundCell.textContent = m.round;
-    tr.appendChild(roundCell);
-
-    const tdA = document.createElement("td");
-    const inputA = document.createElement("input");
-    inputA.type = "number";
-    inputA.className = "score-input";
-    inputA.setAttribute("data-id", m.id);
-    inputA.setAttribute("data-team", "A");
-    if (m.gA !== null) inputA.value = m.gA;
-    inputA.addEventListener("input", updateScores);
-    tdA.appendChild(inputA);
-    tr.appendChild(tdA);
-
-    const tdB = document.createElement("td");
-    const inputB = document.createElement("input");
-    inputB.type = "number";
-    inputB.className = "score-input";
-    inputB.setAttribute("data-id", m.id);
-    inputB.setAttribute("data-team", "B");
-    if (m.gB !== null) inputB.value = m.gB;
-    inputB.addEventListener("input", updateScores);
-    tdB.appendChild(inputB);
-    tr.appendChild(tdB);
-
-    tbody.appendChild(tr);
+function renderMatches(){
+  const body=document.getElementById("matchesBody");body.innerHTML="";
+  matches.forEach((m,i)=>{
+    let tr=document.createElement("tr");
+    const add=t=>{let td=document.createElement("td");td.textContent=t;tr.appendChild(td);};
+    add(i+1);add(teamNames[m.A]);add("vs");add(teamNames[m.B]);
+    let rd=document.createElement("td");rd.className="round";rd.textContent=m.round;tr.appendChild(rd);
+    let tdA=document.createElement("td"),inA=document.createElement("input");
+    inA.type="number";inA.className="score-input";inA.dataset.id=m.id;inA.dataset.team="A";
+    if(m.gA!=null)inA.value=m.gA;inA.oninput=updateScore;tdA.appendChild(inA);tr.appendChild(tdA);
+    let tdB=document.createElement("td"),inB=document.createElement("input");
+    inB.type="number";inB.className="score-input";inB.dataset.id=m.id;inB.dataset.team="B";
+    if(m.gB!=null)inB.value=m.gB;inB.oninput=updateScore;tdB.appendChild(inB);tr.appendChild(tdB);
+    body.appendChild(tr);
   });
 }
 
-function updateScores(e) {
-  const id = parseInt(e.target.getAttribute("data-id"), 10);
-  const team = e.target.getAttribute("data-team");
-  const val = e.target.value === "" ? null : parseInt(e.target.value, 10);
-
-  const match = matches.find(function (m) { return m.id === id; });
-  if (!match) return;
-
-  if (team === "A") {
-    match.gA = val;
-  } else {
-    match.gB = val;
-  }
-
-  updateStandings();
+function updateScore(e){
+  let id=parseInt(e.target.dataset.id),side=e.target.dataset.team;
+  let val=e.target.value===""?null:parseInt(e.target.value);
+  let m=matches.find(x=>x.id===id);if(!m)return;
+  if(side==="A")m.gA=val;else m.gB=val;
+  updateTable();
 }
 
-function updateStandings() {
-  const stats = [];
-
-  for (let i = 0; i < teamCount; i++) {
-    stats.push({
-      id: i,
-      name: teamNames[i],
-      sp: 0,
-      s: 0,
-      u: 0,
-      n: 0,
-      tPlus: 0,
-      tMinus: 0,
-      pkt: 0
-    });
-  }
-
-  matches.forEach(function (m) {
-    if (m.gA === null || m.gB === null || isNaN(m.gA) || isNaN(m.gB)) return;
-
-    const A = stats[m.A];
-    const B = stats[m.B];
-
-    A.sp++; B.sp++;
-    A.tPlus += m.gA;
-    A.tMinus += m.gB;
-    B.tPlus += m.gB;
-    B.tMinus += m.gA;
-
-    if (m.gA > m.gB) {
-      A.s++; B.n++; A.pkt += 3;
-    } else if (m.gA < m.gB) {
-      B.s++; A.n++; B.pkt += 3;
-    } else {
-      A.u++; B.u++; A.pkt += 1; B.pkt += 1;
+function updateTable(){
+  let stats=[];
+  for(let i=0;i<teamCount;i++)
+    stats.push({name:teamNames[i],sp:0,s:0,u:0,n:0,tPlus:0,tMinus:0,pkt:0});
+  matches.forEach(m=>{
+    if(m.gA==null||m.gB==null)return;
+    let A=stats[m.A],B=stats[m.B];
+    A.sp++;B.sp++;A.tPlus+=m.gA;A.tMinus+=m.gB;B.tPlus+=m.gB;B.tMinus+=m.gA;
+    if(m.gA>m.gB){A.s++;B.n++;A.pkt+=3;}
+    else if(m.gA<m.gB){B.s++;A.n++;B.pkt+=3;}
+    else{A.u++;B.u++;A.pkt++;B.pkt++;}
+  });
+  stats.sort((a,b)=>b.pkt-a.pkt||(b.tPlus-b.tMinus)-(a.tPlus-a.tMinus)||b.tPlus-a.tPlus);
+  const body=document.getElementById("standingsBody");body.innerHTML="";
+  const winner=document.getElementById("winnerBox");
+  stats.forEach((s,i)=>{
+    let tr=document.createElement("tr");
+    if(i===0 && s.sp>0){
+      tr.classList.add("leader-row");
+      winner.style.display="flex";
+      winner.innerHTML="🏆 Führender: <strong>"+s.name+"</strong> – "+s.pkt+" Punkte, Diff "+(s.tPlus-s.tMinus);
     }
+    const add=t=>{let td=document.createElement("td");td.textContent=t;tr.appendChild(td);};
+    add(i+1);add(s.name);add(s.sp);add(s.s);add(s.u);add(s.n);add(s.tPlus);add(s.tMinus);add(s.tPlus-s.tMinus);add(s.pkt);
+    body.appendChild(tr);
   });
-
-  stats.sort(function (a, b) {
-    if (b.pkt !== a.pkt) return b.pkt - a.pkt;
-    const diffA = a.tPlus - a.tMinus;
-    const diffB = b.tPlus - b.tMinus;
-    if (diffB !== diffA) return diffB - diffA;
-    return b.tPlus - a.tPlus;
-  });
-
-  const tbody = document.getElementById("standingsBody");
-  tbody.innerHTML = "";
-
-  stats.forEach(function (s, index) {
-    const tr = document.createElement("tr");
-
-    function addCell(text) {
-      const td = document.createElement("td");
-      td.textContent = text;
-      tr.appendChild(td);
-    }
-
-    addCell(index + 1);
-    addCell(s.name);
-    addCell(s.sp);
-    addCell(s.s);
-    addCell(s.u);
-    addCell(s.n);
-    addCell(s.tPlus);
-    addCell(s.tMinus);
-    addCell(s.tPlus - s.tMinus);
-    addCell(s.pkt);
-
-    tbody.appendChild(tr);
-  });
+  if(!stats.length||stats[0].sp===0){winner.style.display="none";winner.innerHTML="";}
 }
 </script>
 </body>
