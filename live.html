@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>USV St. Marein U14 – Live-Tabelle</title>
+<style>
+body{margin:0;font-family:Arial;background:#020b1f;color:#fff;overflow-x:hidden}
+header{padding:16px 10px;display:flex;justify-content:center;align-items:center;gap:16px;background:radial-gradient(circle at top,#2f6ed1,#020b1f)}
+.logo{height:70px;border-radius:50%;box-shadow:0 0 18px rgba(255,255,255,.7)}
+.head-text h1{margin:0;font-size:1.6rem}
+.head-text p{margin:4px 0 0;font-size:.9rem;opacity:.9}
+.container{max-width:900px;margin:18px auto;padding:0 10px}
+.card{background:rgba(0,0,0,.35);border-radius:14px;padding:14px 16px;box-shadow:0 0 25px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.12)}
+.card h2{margin-top:0;margin-bottom:10px;font-size:1.2rem}
+table{width:100%;border-collapse:collapse;color:#fff;font-size:.95rem}
+th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,.12);text-align:center}
+th{background:rgba(255,255,255,.06);backdrop-filter:blur(4px)}
+.leader-row{position:relative;background:rgba(255,215,0,.16);font-weight:bold;}
+.leader-row::before{
+ content:"";position:absolute;top:0;left:-40%;width:40%;height:100%;
+ background:linear-gradient(120deg,rgba(255,255,255,0),rgba(255,255,255,.9),rgba(255,255,255,0));
+ animation:shimmer 2.5s ease-in-out infinite;
+}
+@keyframes shimmer{0%{transform:translateX(-120%)}100%{transform:translateX(300%)}}
+.winner-box{display:none;align-items:center;gap:8px;margin-bottom:10px;padding:8px 14px;border-radius:999px;
+background:linear-gradient(90deg,#ffc400,#ff7b00);color:#222;font-weight:bold;box-shadow:0 0 18px rgba(0,0,0,.6)}
+.winner-box span.cup{font-size:1.4rem}
+.info{margin-top:10px;font-size:.8rem;opacity:.8}
+</style>
+</head>
+<body>
+<header>
+  <img src="logo.png" alt="Logo" class="logo">
+  <div class="head-text">
+    <h1>USV St. Marein U14 – Live-Tabelle</h1>
+    <p>Status wird bei jedem Neuladen aktualisiert</p>
+  </div>
+</header>
+
+<div class="container">
+  <div class="card">
+    <h2>Aktuelle Tabelle</h2>
+    <div id="winnerBox" class="winner-box"></div>
+    <table>
+      <thead>
+        <tr>
+          <th>P</th><th>Team</th><th>Sp</th><th>S</th><th>U</th><th>N</th>
+          <th>T+</th><th>T-</th><th>D</th><th>Pkt</th>
+        </tr>
+      </thead>
+      <tbody id="standingsBody"></tbody>
+    </table>
+    <div class="info">Hinweis: Stand wird aus den Eingaben der Hauptseite berechnet. Für echte Live-Updates über mehrere Geräte wäre ein Server notwendig.</div>
+  </div>
+</div>
+
+<script>
+// Platzhalter: Live-Tabelle benötigt Server oder gemeinsame Datenquelle.
+// Hier könntest du später z.B. über Fetch oder WebSocket Daten laden.
+document.getElementById("winnerBox").style.display="flex";
+document.getElementById("winnerBox").innerHTML="<span class='cup'>ℹ️</span><span>Diese Live-Tabelle ist ein Layout – echte Live-Daten müssen von einem Server kommen.</span>";
+</script>
+</body>
+</html>
