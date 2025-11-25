@@ -106,22 +106,24 @@ th{background:#eaeffd;font-weight:600;}
   font-size:1rem;
 }
 
-/* WINNER */
+/* WINNER BOX - FIX BREITE */
 .winner-box{
-  display:none;background:linear-gradient(90deg,var(--primary),var(--primary-light));
-  color:#fff;padding:8px 14px;border-radius:999px;margin-bottom:10px;
-  align-items:center;gap:8px;font-size:.9rem;
+  display:none;
+  background:linear-gradient(90deg,var(--primary),var(--primary-light));
+  color:#fff;
+  padding:10px 14px;
+  border-radius:12px;
+  margin-bottom:10px;
+  font-size:.95rem;
+  width:100%;
+  box-sizing:border-box;
 }
+
+/* Tabellenführer-Zeile */
 .leader-row{
-  position:relative;background:rgba(27,75,143,.06);overflow:hidden;
+  background:rgba(27,75,143,.16);
+  font-weight:bold;
 }
-.leader-row::before{
-  content:"";position:absolute;top:0;left:-40%;
-  width:40%;height:100%;
-  background:linear-gradient(120deg,rgba(255,255,255,0),rgba(255,255,255,.9),rgba(255,255,255,0));
-  animation:shimmer 2.5s ease-in-out infinite;
-}
-@keyframes shimmer{0%{transform:translateX(-120%)}100%{transform:translateX(300%);}}
 
 /* MOBILE */
 @media(max-width:768px){
@@ -220,7 +222,9 @@ document.addEventListener("DOMContentLoaded",()=>{
 });
 
 function updateTeamCount(){
-  teamCount=parseInt(document.getElementById("teamCount").value);
+  const select=document.getElementById("teamCount");
+  const newCount=parseInt(select.value);
+  teamCount=newCount;
   buildInputs();
   buildMatchesBerger();
   updateTable();
@@ -236,7 +240,8 @@ function buildInputs(){
     let inp=document.createElement("input");
     inp.value=n;inp.dataset.id=i;
     inp.oninput=e=>{
-      teamNames[i]=e.target.value||("Team "+(i+1));
+      const val=e.target.value.trim();
+      teamNames[i]=val || ("Team "+(i+1));
       renderMatches();
       updateTable();
     };
@@ -244,22 +249,19 @@ function buildInputs(){
   }
 }
 
-/* NEU: Berger-Rundenplan (Round-Robin) */
+/* Berger-Rundenplan (Round-Robin) */
 function buildMatchesBerger(){
   matches=[];
-  // Team-Indices
   let indices=[];
   for(let i=0;i<teamCount;i++) indices.push(i);
 
-  let hasBye=false;
   if(teamCount % 2 === 1){
     indices.push(null); // spielfrei
-    hasBye=true;
   }
   const n=indices.length;
   const rounds=n-1;
   let arr=indices.slice();
-  let roundsArr=[]; // Array aus Runden, jede Runde: Liste von Paaren
+  let roundsArr=[];
 
   for(let r=0;r<rounds;r++){
     let pairs=[];
@@ -271,7 +273,6 @@ function buildMatchesBerger(){
       }
     }
     roundsArr.push(pairs);
-    // Rotation (Circle-Method)
     let fixed=arr[0];
     let rest=arr.slice(1);
     rest.unshift(rest.pop());
@@ -279,14 +280,12 @@ function buildMatchesBerger(){
   }
 
   let id=1;
-  // Hinrunde
   for(let r=0;r<rounds;r++){
     let pairs=roundsArr[r];
     pairs.forEach(p=>{
       matches.push({id:id++,A:p.A,B:p.B,round:"Hinrunde "+(r+1),gA:null,gB:null});
     });
   }
-  // Rückrunde (Seiten getauscht)
   for(let r=0;r<rounds;r++){
     let pairs=roundsArr[r];
     pairs.forEach(p=>{
@@ -383,12 +382,15 @@ function updateTable(){
   const winner=document.getElementById("winnerBox");
   body.innerHTML="";
 
+  let hasLeader=false;
+
   stats.forEach((s,i)=>{
     let tr=document.createElement("tr");
     if(i===0 && s.sp>0){
       tr.classList.add("leader-row");
-      winner.style.display="flex";
-      winner.innerHTML="🏆 Führender: <strong>"+s.name+"</strong> – "+s.pkt+" Punkte, Diff "+(s.tPlus-s.tMinus);
+      winner.style.display="block";
+      winner.textContent="🏆 Führender:  "+s.name+"  – "+s.pkt+" Punkte, Diff "+(s.tPlus-s.tMinus);
+      hasLeader=true;
     }
     const add=t=>{
       let td=document.createElement("td");
@@ -409,9 +411,9 @@ function updateTable(){
     body.appendChild(tr);
   });
 
-  if(!stats.length || stats[0].sp===0){
+  if(!hasLeader){
     winner.style.display="none";
-    winner.innerHTML="";
+    winner.textContent="";
   }
 }
 </script>
