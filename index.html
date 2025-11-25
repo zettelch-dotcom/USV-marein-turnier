@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>USV St. Marein U14 – Turnierplan</title>
 <style>
 body{margin:0;font-family:Arial;background:#f5f5f5;overflow-x:hidden}
+/* INTRO */
 #intro{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;animation:introFade 6s ease-out forwards}
 #intro img{width:70%;opacity:0;animation:ballIn 2.5s ease-out forwards .3s}
 #introText{margin-top:20px;color:#fff;font-size:2.2rem;font-weight:bold;opacity:0;text-shadow:0 0 12px #fff;animation:textIn 2.5s ease-out forwards 1.2s;text-align:center}
 @keyframes ballIn{0%{opacity:0;transform:scale(.95)}100%{opacity:1;transform:scale(1)}}
 @keyframes textIn{0%{opacity:0;transform:translateY(15px)}100%{opacity:1;transform:translateY(0)}}
 @keyframes introFade{0%{opacity:1}100%{opacity:0;visibility:hidden}}
+
+/* MAIN FADE-IN */
 #main{opacity:0;display:none;transition:opacity 3s ease}
+
 header{background:#1b4b8f;padding:20px 10px;color:#fff;display:flex;justify-content:center}
 .header-center{display:flex;align-items:center;gap:20px;max-width:1100px}
 .logo-wrapper{border-radius:50%;animation:glow 3s ease-in-out infinite}
@@ -21,23 +26,32 @@ header{background:#1b4b8f;padding:20px 10px;color:#fff;display:flex;justify-cont
 .header-text{text-align:center}
 .header-text h1{margin:0;font-size:1.7rem}
 .header-text p{margin:6px 0 0;opacity:.9}
+
 .container{max-width:1100px;margin:20px auto;padding:0 10px}
 .card{background:#fff;padding:16px;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,.1);margin-bottom:20px}
 .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+
 table{width:100%;border-collapse:collapse}
-th,td{border-bottom:1px solid #ddd;padding:8px}
-th{background:#eaeffd}
+th,td{border-bottom:1px solid #ddd;padding:8px;text-align:center}
+
 .score-input{width:50px;text-align:center}
 .round{font-size:.8rem;opacity:.7}
-.winner-box{display:none;background:linear-gradient(90deg,#1b4b8f,#2f6ed1);color:#fff;padding:8px 14px;border-radius:999px;margin-bottom:10px;align-items:center;gap:8px}
+
+.winner-box{display:none;background:linear-gradient(90deg,#1b4b8f,#2f6ed1);color:#fff;
+padding:8px 14px;border-radius:999px;margin-bottom:10px;align-items:center;gap:8px}
+
 .leader-row{position:relative;background:rgba(27,75,143,.06);overflow:hidden}
-.leader-row::before{content:"";position:absolute;top:0;left:-40%;width:40%;height:100%;background:linear-gradient(120deg,rgba(255,255,255,0),rgba(255,255,255,.9),rgba(255,255,255,0));animation:shimmer 2.5s ease-in-out infinite}
+.leader-row::before{content:"";position:absolute;top:0;left:-40%;width:40%;height:100%;
+background:linear-gradient(120deg,rgba(255,255,255,0),rgba(255,255,255,.9),rgba(255,255,255,0));
+animation:shimmer 2.5s ease-in-out infinite}
 @keyframes shimmer{0%{transform:translateX(-120%)}100%{transform:translateX(300%)}}
+
 .qr-wrapper{display:flex;gap:16px;align-items:center}
 .qr-wrapper img{width:150px;height:150px;border:1px solid #ddd;border-radius:12px}
 </style>
 </head>
 <body>
+
 <div id="intro">
   <img src="ball_intro_c3.png" alt="Intro Ball">
   <div id="introText">USV St. Marein U14<br>Turnier 2025</div>
@@ -59,7 +73,12 @@ th{background:#eaeffd}
   <div class="card">
     <h2>Einstellungen</h2>
     <label>Anzahl Teams</label>
-    <select id="teamCount"><option value="3">3 Teams</option><option value="4">4 Teams</option><option value="5">5 Teams</option><option value="6">6 Teams</option></select>
+    <select id="teamCount">
+      <option value="3">3 Teams</option>
+      <option value="4">4 Teams</option>
+      <option value="5">5 Teams</option>
+      <option value="6">6 Teams</option>
+    </select>
     <h3>Mannschaftsnamen</h3>
     <div id="teamInputs" class="team-grid"></div>
   </div>
@@ -67,7 +86,11 @@ th{background:#eaeffd}
   <div class="card">
     <h2>Spielplan</h2>
     <table>
-      <thead><tr><th>#</th><th>Team A</th><th></th><th>Team B</th><th>Runde</th><th>A</th><th>B</th></tr></thead>
+      <thead>
+        <tr>
+          <th>#</th><th>Team A</th><th></th><th>Team B</th><th>Runde</th><th>A</th><th>B</th>
+        </tr>
+      </thead>
       <tbody id="matchesBody"></tbody>
     </table>
   </div>
@@ -76,16 +99,21 @@ th{background:#eaeffd}
     <h2>Tabelle</h2>
     <div id="winnerBox" class="winner-box"></div>
     <table>
-      <thead><tr><th>P</th><th>Team</th><th>Team</th><th>Sp</th><th>S</th><th>U</th><th>N</th><th>T+</th><th>T-</th><th>D</th><th>Pkt</th></tr></thead>
+      <thead>
+        <tr>
+          <th>P</th><th>Team</th><th>Sp</th><th>S</th><th>U</th><th>N</th>
+          <th>T+</th><th>T-</th><th>D</th><th>Pkt</th>
+        </tr>
+      </thead>
       <tbody id="standingsBody"></tbody>
     </table>
   </div>
 
   <div class="card">
-    <h2>Live-Ansicht per QR-Code</h2>
+    <h2>Live-Ansicht per QR-Code (nur Tabelle)</h2>
     <div class="qr-wrapper">
       <img id="qrImage" alt="QR-Code">
-      <div>QR mit Handy scannen → Live-Ansicht der Seite öffnen.</div>
+      <div>QR mit Handy scannen → <strong>reine Live-Tabelle</strong> öffnen.</div>
     </div>
   </div>
 </div>
@@ -103,7 +131,14 @@ window.onload=function(){
 };
 
 document.addEventListener("DOMContentLoaded",function(){
-  document.getElementById("qrImage").src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="+encodeURIComponent(location.href);
+  // QR auf live.html
+  let base=location.href.split('#')[0].split('?')[0];
+  if(base.endsWith("index.html")) base=base.slice(0,-10);
+  if(!base.endsWith("/")) base+="/";
+  const liveUrl=base+"live.html";
+  document.getElementById("qrImage").src=
+    "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="+encodeURIComponent(liveUrl);
+
   document.getElementById("teamCount").addEventListener("change",updateTeamCount);
   updateTeamCount();
 });
@@ -180,7 +215,8 @@ function updateTable(){
       winner.innerHTML="🏆 Führender: <strong>"+s.name+"</strong> – "+s.pkt+" Punkte, Diff "+(s.tPlus-s.tMinus);
     }
     const add=t=>{let td=document.createElement("td");td.textContent=t;tr.appendChild(td);};
-    add(i+1);add(s.name);add(s.sp);add(s.s);add(s.u);add(s.n);add(s.tPlus);add(s.tMinus);add(s.tPlus-s.tMinus);add(s.pkt);
+    add(i+1);add(s.name);add(s.sp);add(s.s);add(s.u);add(s.n);
+    add(s.tPlus);add(s.tMinus);add(s.tPlus-s.tMinus);add(s.pkt);
     body.appendChild(tr);
   });
   if(!stats.length||stats[0].sp===0){winner.style.display="none";winner.innerHTML="";}
