@@ -50,7 +50,7 @@ header{
   gap:18px;max-width:1100px;width:100%;
 }
 
-/* FIXED: RUNDES LOGO */
+/* RUNDES LOGO */
 .logo-wrapper{
   border-radius:50%;
   overflow:hidden;
@@ -77,6 +77,21 @@ header{
 }
 .card h2{margin:0 0 10px;font-size:1.2rem;}
 
+/* TEAM INPUT GRID */
+.team-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:10px;
+  margin-top:6px;
+}
+.team-grid input{
+  width:100%;
+  padding:6px 8px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:.95rem;
+}
+
 /* TABLES */
 .table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
 table{width:100%;border-collapse:collapse;min-width:480px;}
@@ -84,6 +99,7 @@ th,td{border-bottom:1px solid #ddd;padding:8px 6px;text-align:center;font-size:.
 th{background:#eaeffd;font-weight:600;}
 .round{font-size:.75rem;opacity:.7;}
 
+/* SCORES */
 .score-input{
   width:54px;max-width:64px;padding:6px 4px;
   text-align:center;border-radius:8px;border:1px solid #bbb;
@@ -206,7 +222,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 function updateTeamCount(){
   teamCount=parseInt(document.getElementById("teamCount").value);
   buildInputs();
-  buildMatches();
+  buildMatchesBerger();
   updateTable();
 }
 
@@ -221,24 +237,61 @@ function buildInputs(){
     inp.value=n;inp.dataset.id=i;
     inp.oninput=e=>{
       teamNames[i]=e.target.value||("Team "+(i+1));
-      renderMatches();updateTable();
+      renderMatches();
+      updateTable();
     };
     box.appendChild(inp);
   }
 }
 
-function buildMatches(){
+/* NEU: Berger-Rundenplan (Round-Robin) */
+function buildMatchesBerger(){
   matches=[];
-  let id=1;
-  for(let a=0;a<teamCount;a++){
-    for(let b=a+1;b<teamCount;b++){
-      matches.push({id:id++,A:a,B:b,round:"Hinrunde",gA:null,gB:null});
-    }
+  // Team-Indices
+  let indices=[];
+  for(let i=0;i<teamCount;i++) indices.push(i);
+
+  let hasBye=false;
+  if(teamCount % 2 === 1){
+    indices.push(null); // spielfrei
+    hasBye=true;
   }
-  for(let a=0;a<teamCount;a++){
-    for(let b=a+1;b<teamCount;b++){
-      matches.push({id:id++,A:b,B:a,round:"Rückrunde",gA:null,gB:null});
+  const n=indices.length;
+  const rounds=n-1;
+  let arr=indices.slice();
+  let roundsArr=[]; // Array aus Runden, jede Runde: Liste von Paaren
+
+  for(let r=0;r<rounds;r++){
+    let pairs=[];
+    for(let i=0;i<n/2;i++){
+      let t1=arr[i];
+      let t2=arr[n-1-i];
+      if(t1!==null && t2!==null){
+        pairs.push({A:t1,B:t2});
+      }
     }
+    roundsArr.push(pairs);
+    // Rotation (Circle-Method)
+    let fixed=arr[0];
+    let rest=arr.slice(1);
+    rest.unshift(rest.pop());
+    arr=[fixed].concat(rest);
+  }
+
+  let id=1;
+  // Hinrunde
+  for(let r=0;r<rounds;r++){
+    let pairs=roundsArr[r];
+    pairs.forEach(p=>{
+      matches.push({id:id++,A:p.A,B:p.B,round:"Hinrunde "+(r+1),gA:null,gB:null});
+    });
+  }
+  // Rückrunde (Seiten getauscht)
+  for(let r=0;r<rounds;r++){
+    let pairs=roundsArr[r];
+    pairs.forEach(p=>{
+      matches.push({id:id++,A:p.B,B:p.A,round:"Rückrunde "+(r+1),gA:null,gB:null});
+    });
   }
   renderMatches();
 }
@@ -254,9 +307,9 @@ function renderMatches(){
       tr.appendChild(td);
     };
     add(i+1);
-    add(teamNames[m.A]);
+    add(teamNames[m.A] || ("Team "+(m.A+1)));
     add("vs");
-    add(teamNames[m.B]);
+    add(teamNames[m.B] || ("Team "+(m.B+1)));
 
     let rd=document.createElement("td");
     rd.className="round";
