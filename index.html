@@ -5,146 +5,61 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>USV St. Marein U14 – Turnierplan</title>
 <style>
-:root{
-  --bg:#f5f5f5;
-  --primary:#1b4b8f;
-  --primary-light:#2f6ed1;
-}
+:root{--bg:#f5f5f5;--primary:#1b4b8f;--primary-light:#2f6ed1;}
 *{box-sizing:border-box;}
-body{
-  margin:0;
-  font-family:Arial,system-ui;
-  background:var(--bg);
-  color:#222;
-  overflow-x:hidden;
-  font-size:16px;
-}
-/* INTRO */
-#intro{
-  position:fixed;inset:0;background:#000;
-  display:flex;flex-direction:column;
-  justify-content:center;align-items:center;
-  z-index:9999;animation:introFade 6s ease-out forwards;
-}
+body{margin:0;font-family:Arial,system-ui;background:var(--bg);color:#222;overflow-x:hidden;font-size:16px;}
+#intro{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;animation:introFade 6s ease-out forwards;}
 #intro img{width:70%;max-width:420px;opacity:0;animation:ballIn 2.5s ease-out forwards .3s;}
-#introText{
-  margin-top:20px;color:#fff;font-size:2.1rem;
-  font-weight:bold;opacity:0;text-shadow:0 0 12px #fff;
-  animation:textIn 2.5s ease-out forwards 1.2s;text-align:center;
-}
+#introText{margin-top:20px;color:#fff;font-size:2.1rem;font-weight:bold;opacity:0;text-shadow:0 0 12px #fff;animation:textIn 2.5s ease-out forwards 1.2s;text-align:center;}
 @keyframes ballIn{0%{opacity:0;transform:scale(.95)}100%{opacity:1;transform:scale(1)}}
 @keyframes textIn{0%{opacity:0;transform:translateY(15px)}100%{opacity:1;transform:translateY(0)}}
 @keyframes introFade{0%{opacity:1}100%{opacity:0;visibility:hidden}}
-
-/* MAIN */
 #main{opacity:0;display:none;transition:opacity 3s ease;}
-
-/* HEADER */
-header{
-  background:var(--primary);
-  padding:14px 8px;
-  color:#fff;display:flex;justify-content:center;
-}
-.header-center{
-  display:flex;align-items:center;
-  gap:18px;max-width:1100px;width:100%;
-}
-
-/* RUNDES LOGO */
-.logo-wrapper{
-  border-radius:50%;
-  overflow:hidden;
-  padding:0;
-  width:100px;
-  height:100px;
-  animation:glow 3s ease-in-out infinite;
-}
-.logo-wrapper img{
-  width:100%;height:100%;object-fit:cover;display:block;
-}
+header{background:var(--primary);padding:14px 8px;color:#fff;display:flex;justify-content:center;}
+.header-center{display:flex;align-items:center;gap:18px;max-width:1100px;width:100%;}
+.logo-wrapper{border-radius:50%;overflow:hidden;padding:0;width:100px;height:100px;animation:glow 3s ease-in-out infinite;}
+.logo-wrapper img{width:100%;height:100%;object-fit:cover;display:block;}
 @keyframes glow{50%{box-shadow:0 0 18px rgba(255,255,255,.9);}}
-
 .header-photo{height:110px;width:auto;border-radius:10px;object-fit:cover;}
 .header-text{text-align:center;flex:1;}
 .header-text h1{margin:0;font-size:1.7rem;}
 .header-text p{margin:6px 0 0;opacity:.9;font-size:.9rem;}
-
-/* CONTAINER */
 .container{max-width:1100px;margin:16px auto 24px;padding:0 10px;}
-.card{
-  background:#fff;padding:16px;border-radius:12px;
-  box-shadow:0 3px 10px rgba(0,0,0,.08);margin-bottom:16px;
-}
+.card{background:#fff;padding:16px;border-radius:12px;box-shadow:0 3px 10px rgba(0,0,0,.08);margin-bottom:16px;}
 .card h2{margin:0 0 10px;font-size:1.2rem;}
-
-/* SETTINGS ROW (Button rechts) */
-.settings-row{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-}
+.settings-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .settings-row .reset-btn{margin-left:auto;}
-.reset-btn{
-  border:0;
-  border-radius:10px;
-  padding:10px 14px;
-  background:#c0392b;
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-}
+.reset-btn{border:0;border-radius:10px;padding:10px 14px;background:#c0392b;color:#fff;font-weight:700;cursor:pointer;}
 .reset-btn:active{transform:translateY(1px);}
-
-/* TEAM INPUT GRID */
-.team-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:10px;
-  margin-top:6px;
-}
-.team-grid input{
-  width:100%;
-  padding:6px 8px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  font-size:.95rem;
-}
-
-/* TABLES */
+.toggle{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #d9d9d9;border-radius:10px;background:#fafafa;}
+.toggle input{transform:scale(1.1);}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:6px;}
+.team-grid input{width:100%;padding:6px 8px;border-radius:8px;border:1px solid #ccc;font-size:.95rem;}
 .table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
 table{width:100%;border-collapse:collapse;min-width:480px;}
 th,td{border-bottom:1px solid #ddd;padding:8px 6px;text-align:center;font-size:.9rem;}
 th{background:#eaeffd;font-weight:600;}
 .round{font-size:.75rem;opacity:.7;}
-
-/* SCORES */
-.score-input{
-  width:54px;max-width:64px;padding:6px 4px;
-  text-align:center;border-radius:8px;border:1px solid #bbb;
-  font-size:1rem;
-}
-
-/* WINNER BOX - FIX BREITE */
-.winner-box{
-  display:none;
-  background:linear-gradient(90deg,var(--primary),var(--primary-light));
-  color:#fff;
-  padding:10px 14px;
-  border-radius:12px;
-  margin-bottom:10px;
-  font-size:.95rem;
-  width:100%;
-  box-sizing:border-box;
-}
-
-/* Tabellenführer-Zeile */
-.leader-row{
-  background:rgba(27,75,143,.16);
-  font-weight:bold;
-}
-
-/* MOBILE */
+.score-input{width:54px;max-width:64px;padding:6px 4px;text-align:center;border-radius:8px;border:1px solid #bbb;font-size:1rem;}
+.winner-box{display:none;background:linear-gradient(90deg,var(--primary),var(--primary-light));color:#fff;padding:10px 14px;border-radius:12px;margin-bottom:10px;font-size:.95rem;width:100%;box-sizing:border-box;}
+.leader-row{background:rgba(27,75,143,.16);font-weight:bold;}
+.team-cell{display:flex;align-items:center;justify-content:center;gap:6px;}
+.kick-ball{font-size:1rem;}
+.guided-card{display:none;}
+.match-pill{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.match-title{font-weight:800;}
+.match-meta{opacity:.8;font-size:.9rem;}
+.guided-vs{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;font-size:1.2rem;margin:10px 0 14px;}
+.score-row{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;}
+.score-col{display:flex;align-items:center;gap:10px;}
+.plus-ball{cursor:pointer;font-size:1.8rem;user-select:none;line-height:1;padding:4px 6px;border-radius:10px;}
+.plus-ball:active{transform:scale(.96);}
+.score-big{width:90px;font-size:1.4rem;padding:10px 8px;border-radius:12px;border:1px solid #bbb;text-align:center;}
+.controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:14px;}
+.btn{border:0;border-radius:10px;padding:10px 14px;background:var(--primary);color:#fff;font-weight:700;cursor:pointer;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn.secondary{background:#2f6ed1;}
+.btn.light{background:#eaeffd;color:#1b4b8f;}
 @media(max-width:768px){
   .header-center{flex-direction:column;text-align:center;}
   .logo-wrapper{width:80px;height:80px;}
@@ -152,6 +67,7 @@ th{background:#eaeffd;font-weight:600;}
   .header-text h1{font-size:1.3rem;}
   .header-text p{font-size:.8rem;}
   .settings-row .reset-btn{margin-left:0;width:100%;}
+  .controls{justify-content:center;}
 }
 @media(max-width:480px){
   #introText{font-size:1.6rem;margin:14px 10px 0;}
@@ -160,12 +76,10 @@ th{background:#eaeffd;font-weight:600;}
 </style>
 </head>
 <body>
-
 <div id="intro">
   <img src="ball_intro_c3.png" alt="Intro Ball">
   <div id="introText">USV St. Marein U14<br>Turnier 2025</div>
 </div>
-
 <div id="main">
 <header>
   <div class="header-center">
@@ -177,11 +91,9 @@ th{background:#eaeffd;font-weight:600;}
     <img src="foto1.png" class="header-photo" alt="Teamfoto">
   </div>
 </header>
-
 <div class="container">
   <div class="card">
     <h2>Einstellungen</h2>
-
     <div class="settings-row">
       <div>
         <label for="teamCount">Anzahl Teams</label>
@@ -192,22 +104,47 @@ th{background:#eaeffd;font-weight:600;}
           <option value="6">6 Teams</option>
         </select>
       </div>
-
+      <label class="toggle" title="Wenn aktiv, wird nur das aktuelle Spiel angezeigt">
+        <input type="checkbox" id="guidedToggle">
+        <span><strong>Geführtes Turnier</strong> (nur aktuelles Spiel)</span>
+      </label>
       <button class="reset-btn" id="resetBtn" type="button">Neues Turnier starten</button>
     </div>
-
     <h3 style="margin:10px 0 4px;font-size:1rem;">Mannschaftsnamen</h3>
     <div id="teamInputs" class="team-grid"></div>
   </div>
 
-  <div class="card">
+  <div class="card guided-card" id="guidedCard">
+    <div class="match-pill">
+      <div class="match-title">Aktuelles Spiel</div>
+      <div class="match-meta" id="guidedMeta"></div>
+    </div>
+    <div class="guided-vs" id="guidedVs"></div>
+
+    <div class="score-row">
+      <div class="score-col">
+        <span class="plus-ball" id="ballA" title="+1 Tor Team A">⚽</span>
+        <input class="score-big" type="number" inputmode="numeric" id="guidedScoreA">
+      </div>
+      <div style="font-weight:900;font-size:1.8rem;">:</div>
+      <div class="score-col">
+        <input class="score-big" type="number" inputmode="numeric" id="guidedScoreB">
+        <span class="plus-ball" id="ballB" title="+1 Tor Team B">⚽</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn light" id="prevBtn">◀ Vorheriges</button>
+      <button class="btn secondary" id="nextBtn">Nächstes ▶</button>
+    </div>
+  </div>
+
+  <div class="card" id="scheduleCard">
     <h2>Spielplan</h2>
     <div class="table-scroll">
       <table>
         <thead>
-          <tr>
-            <th>#</th><th>Team A</th><th></th><th>Team B</th><th>Runde</th><th>A</th><th>B</th>
-          </tr>
+          <tr><th>#</th><th>Team A</th><th></th><th>Team B</th><th>Runde</th><th>A</th><th>B</th></tr>
         </thead>
         <tbody id="matchesBody"></tbody>
       </table>
@@ -220,10 +157,7 @@ th{background:#eaeffd;font-weight:600;}
     <div class="table-scroll">
       <table>
         <thead>
-          <tr>
-            <th>P</th><th>Team</th><th>Sp</th><th>S</th><th>U</th><th>N</th>
-            <th>T+</th><th>T-</th><th>D</th><th>Pkt</th>
-          </tr>
+          <tr><th>P</th><th>Team</th><th>Sp</th><th>S</th><th>U</th><th>N</th><th>T+</th><th>T-</th><th>D</th><th>Pkt</th></tr>
         </thead>
         <tbody id="standingsBody"></tbody>
       </table>
@@ -233,9 +167,10 @@ th{background:#eaeffd;font-weight:600;}
 </div>
 
 <script>
-const STORAGE_KEY="usv_turnier_state_v1";
-
+const STORAGE_KEY="usv_turnier_state_v2_guided";
 let teamCount=3,teamNames=[],matches=[];
+let guidedMode=false;
+let currentMatchIndex=0;
 
 window.onload=function(){
   setTimeout(()=>{
@@ -255,25 +190,62 @@ document.addEventListener("DOMContentLoaded",()=>{
     }
   });
 
-  // 1) State laden (falls vorhanden)
+  document.getElementById("guidedToggle").addEventListener("change",(e)=>{
+    guidedMode = !!e.target.checked;
+    if(guidedMode){
+      const idx = findFirstUnplayedIndex();
+      if(idx !== -1) currentMatchIndex = idx;
+    }
+    applyModeUI();
+    renderMatches();
+    renderGuidedMatch();
+    updateTable();
+    saveState();
+  });
+
+  document.getElementById("prevBtn").addEventListener("click",()=>{
+    if(currentMatchIndex>0){ currentMatchIndex--; renderGuidedMatch(); saveState(); }
+  });
+  document.getElementById("nextBtn").addEventListener("click",()=>{
+    if(currentMatchIndex<matches.length-1){ currentMatchIndex++; renderGuidedMatch(); saveState(); }
+  });
+
+  document.getElementById("guidedScoreA").addEventListener("input",(e)=>setGuidedScore("A", e.target.value));
+  document.getElementById("guidedScoreB").addEventListener("input",(e)=>setGuidedScore("B", e.target.value));
+
+  document.getElementById("ballA").addEventListener("click",()=>incGuided("A"));
+  document.getElementById("ballB").addEventListener("click",()=>incGuided("B"));
+
   const loaded = loadState();
-  // 2) UI initialisieren
   document.getElementById("teamCount").value = String(teamCount);
+  document.getElementById("guidedToggle").checked = guidedMode;
+
   buildInputs();
   buildMatchesBerger(loaded);
+  applyModeUI();
   renderMatches();
+  renderGuidedMatch();
   updateTable();
 });
 
+function incGuided(side){
+  const input = (side==="A") ? document.getElementById("guidedScoreA") : document.getElementById("guidedScoreB");
+  const next = (parseInt(input.value,10) || 0) + 1;
+  input.value = String(next);
+  input.dispatchEvent(new Event("input", {bubbles:true}));
+}
+
+function applyModeUI(){
+  document.getElementById("guidedCard").style.display = guidedMode ? "block" : "none";
+  document.getElementById("scheduleCard").style.display = guidedMode ? "none" : "block";
+}
+
 function saveState(){
   try{
-    const state = {
-      v: 1,
-      teamCount,
-      teamNames,
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      v:2, teamCount, teamNames, guidedMode, currentMatchIndex,
       scores: matches.map(m => ({id:m.id, gA:m.gA, gB:m.gB}))
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }));
   }catch(e){}
 }
 
@@ -281,38 +253,29 @@ function loadState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     if(!raw) return null;
-    const state = JSON.parse(raw);
-    if(!state || state.v!==1) return null;
-    if(typeof state.teamCount === "number") teamCount = state.teamCount;
-    if(Array.isArray(state.teamNames)) teamNames = state.teamNames;
-    return state;
-  }catch(e){
-    return null;
-  }
+    const s = JSON.parse(raw);
+    if(!s || s.v!==2) return null;
+    if(typeof s.teamCount === "number") teamCount = s.teamCount;
+    if(Array.isArray(s.teamNames)) teamNames = s.teamNames;
+    guidedMode = !!s.guidedMode;
+    if(Number.isInteger(s.currentMatchIndex)) currentMatchIndex = s.currentMatchIndex;
+    return s;
+  }catch(e){ return null; }
 }
 
 function updateTeamCount(){
-  const select=document.getElementById("teamCount");
-  const newCount=parseInt(select.value);
-
-  teamCount=newCount;
-  teamNames=[];
-  matches=[];
-  buildInputs();
-  buildMatchesBerger(null);
-  renderMatches();
-  updateTable();
-  saveState();
+  teamCount=parseInt(document.getElementById("teamCount").value,10);
+  teamNames=[]; matches=[]; currentMatchIndex=0;
+  buildInputs(); buildMatchesBerger(null);
+  renderMatches(); renderGuidedMatch(); updateTable(); saveState();
 }
 
 function buildInputs(){
   const box=document.getElementById("teamInputs");
   box.innerHTML="";
-
   if(!Array.isArray(teamNames) || teamNames.length!==teamCount){
     teamNames = Array.from({length:teamCount}, (_,i)=>"Team "+(i+1));
   }
-
   for(let i=0;i<teamCount;i++){
     let inp=document.createElement("input");
     inp.value=teamNames[i] || ("Team "+(i+1));
@@ -320,36 +283,25 @@ function buildInputs(){
     inp.oninput=e=>{
       const val=e.target.value.trim();
       teamNames[i]= val || ("Team "+(i+1));
-      renderMatches();
-      updateTable();
-      saveState();
+      renderMatches(); renderGuidedMatch(); updateTable(); saveState();
     };
     box.appendChild(inp);
   }
 }
 
-/* Berger-Rundenplan (Round-Robin) */
-function buildMatchesBerger(loadedState){
+function buildMatchesBerger(loaded){
   matches=[];
-  let indices=[];
-  for(let i=0;i<teamCount;i++) indices.push(i);
+  let indices=[...Array(teamCount).keys()];
+  if(teamCount%2===1) indices.push(null);
 
-  if(teamCount % 2 === 1){
-    indices.push(null);
-  }
-  const n=indices.length;
-  const rounds=n-1;
-  let arr=indices.slice();
-  let roundsArr=[];
+  const n=indices.length, rounds=n-1;
+  let arr=indices.slice(), roundsArr=[];
 
   for(let r=0;r<rounds;r++){
     let pairs=[];
     for(let i=0;i<n/2;i++){
-      let t1=arr[i];
-      let t2=arr[n-1-i];
-      if(t1!==null && t2!==null){
-        pairs.push({A:t1,B:t2});
-      }
+      let t1=arr[i], t2=arr[n-1-i];
+      if(t1!==null && t2!==null) pairs.push({A:t1,B:t2});
     }
     roundsArr.push(pairs);
     let fixed=arr[0];
@@ -359,87 +311,124 @@ function buildMatchesBerger(loadedState){
   }
 
   let id=1;
-  for(let r=0;r<rounds;r++){
-    roundsArr[r].forEach(p=>{
-      matches.push({id:id++,A:p.A,B:p.B,round:"Hinrunde "+(r+1),gA:null,gB:null});
-    });
-  }
-  for(let r=0;r<rounds;r++){
-    roundsArr[r].forEach(p=>{
-      matches.push({id:id++,A:p.B,B:p.A,round:"Rückrunde "+(r+1),gA:null,gB:null});
+  for(let r=0;r<rounds;r++) roundsArr[r].forEach(p=>matches.push({id:id++,A:p.A,B:p.B,round:"Hinrunde "+(r+1),gA:null,gB:null}));
+  for(let r=0;r<rounds;r++) roundsArr[r].forEach(p=>matches.push({id:id++,A:p.B,B:p.A,round:"Rückrunde "+(r+1),gA:null,gB:null}));
+
+  if(loaded && Array.isArray(loaded.scores)){
+    const map=new Map(loaded.scores.map(s=>[s.id,s]));
+    matches.forEach(m=>{
+      const s=map.get(m.id);
+      if(s){ m.gA = (s.gA==null?null:s.gA); m.gB = (s.gB==null?null:s.gB); }
     });
   }
 
-  if(loadedState && Array.isArray(loadedState.scores)){
-    const map = new Map(loadedState.scores.map(s=>[s.id, s]));
-    matches.forEach(m=>{
-      const s = map.get(m.id);
-      if(s){
-        m.gA = (s.gA===null || s.gA===undefined) ? null : s.gA;
-        m.gB = (s.gB===null || s.gB===undefined) ? null : s.gB;
-      }
-    });
+  if(guidedMode){
+    const idx=findFirstUnplayedIndex();
+    if(idx!==-1) currentMatchIndex=idx;
   }
+  currentMatchIndex=Math.max(0, Math.min(currentMatchIndex, matches.length-1));
 }
+
+function kickoffSide(m){ return String(m.round).startsWith("Hinrunde") ? "A" : "B"; }
+function teamName(i){ return teamNames[i] || ("Team "+(i+1)); }
+function cellText(t){ let td=document.createElement("td"); td.textContent=t; return td; }
 
 function renderMatches(){
   const body=document.getElementById("matchesBody");
+  if(!body) return;
   body.innerHTML="";
   matches.forEach((m,i)=>{
-    let tr=document.createElement("tr");
-    const addText=t=>{
-      let td=document.createElement("td");
-      td.textContent=t;
-      tr.appendChild(td);
-    };
-    addText(i+1);
-    addText(teamNames[m.A] || ("Team "+(m.A+1)));
-    addText("vs");
-    addText(teamNames[m.B] || ("Team "+(m.B+1)));
+    const kick=kickoffSide(m);
+    const Aname=teamName(m.A), Bname=teamName(m.B);
 
-    let rd=document.createElement("td");
-    rd.className="round";
-    rd.textContent=m.round;
-    tr.appendChild(rd);
+    let tr=document.createElement("tr");
+    tr.appendChild(cellText(i+1));
 
     let tdA=document.createElement("td");
-    let inA=document.createElement("input");
-    inA.type="number";
-    inA.inputMode="numeric";
-    inA.className="score-input";
-    inA.dataset.id=m.id;
-    inA.dataset.team="A";
-    if(m.gA!=null) inA.value=m.gA;
-    inA.addEventListener("input", updateScore);
-    tdA.appendChild(inA);
+    tdA.innerHTML=(kick==="A")?`<span class="team-cell"><span class="kick-ball">⚽</span>${Aname}</span>`:Aname;
     tr.appendChild(tdA);
 
+    tr.appendChild(cellText("vs"));
+
     let tdB=document.createElement("td");
+    tdB.innerHTML=(kick==="B")?`<span class="team-cell"><span class="kick-ball">⚽</span>${Bname}</span>`:Bname;
+    tr.appendChild(tdB);
+
+    let rd=document.createElement("td"); rd.className="round"; rd.textContent=m.round; tr.appendChild(rd);
+
+    let tdSA=document.createElement("td");
+    let inA=document.createElement("input");
+    inA.type="number"; inA.inputMode="numeric"; inA.className="score-input";
+    inA.dataset.id=m.id; inA.dataset.team="A";
+    if(m.gA!=null) inA.value=m.gA;
+    inA.addEventListener("input", updateScore);
+    tdSA.appendChild(inA); tr.appendChild(tdSA);
+
+    let tdSB=document.createElement("td");
     let inB=document.createElement("input");
-    inB.type="number";
-    inB.inputMode="numeric";
-    inB.className="score-input";
-    inB.dataset.id=m.id;
-    inB.dataset.team="B";
+    inB.type="number"; inB.inputMode="numeric"; inB.className="score-input";
+    inB.dataset.id=m.id; inB.dataset.team="B";
     if(m.gB!=null) inB.value=m.gB;
     inB.addEventListener("input", updateScore);
-    tdB.appendChild(inB);
-    tr.appendChild(tdB);
+    tdSB.appendChild(inB); tr.appendChild(tdSB);
 
     body.appendChild(tr);
   });
 }
 
-function updateScore(e){
-  let id=parseInt(e.target.dataset.id);
-  let side=e.target.dataset.team;
-  let val=e.target.value===""?null:parseInt(e.target.value);
-  let m=matches.find(x=>x.id===id);
+function renderGuidedMatch(){
+  const meta=document.getElementById("guidedMeta");
+  const vs=document.getElementById("guidedVs");
+  const inA=document.getElementById("guidedScoreA");
+  const inB=document.getElementById("guidedScoreB");
+  const prev=document.getElementById("prevBtn");
+  const next=document.getElementById("nextBtn");
+  if(!meta||!vs||!inA||!inB||!prev||!next||matches.length===0) return;
+
+  currentMatchIndex=Math.max(0, Math.min(currentMatchIndex, matches.length-1));
+  const m=matches[currentMatchIndex];
+  const kick=kickoffSide(m);
+  const Aname=teamName(m.A), Bname=teamName(m.B);
+
+  meta.textContent=`Spiel ${currentMatchIndex+1} von ${matches.length} • ${m.round}`;
+
+  const Ahtml=(kick==="A")?`<span class="team-cell"><span class="kick-ball">⚽</span>${Aname}</span>`:`<span class="team-cell">${Aname}</span>`;
+  const Bhtml=(kick==="B")?`<span class="team-cell"><span class="kick-ball">⚽</span>${Bname}</span>`:`<span class="team-cell">${Bname}</span>`;
+
+  vs.innerHTML = `${Ahtml} <span style="opacity:.7;font-weight:900;">vs</span> ${Bhtml}`;
+
+  inA.value=(m.gA==null)?"":m.gA;
+  inB.value=(m.gB==null)?"":m.gB;
+
+  prev.disabled=(currentMatchIndex===0);
+  next.disabled=(currentMatchIndex===matches.length-1);
+}
+
+function setGuidedScore(side, value){
+  const m=matches[currentMatchIndex];
   if(!m) return;
-  if(side==="A") m.gA=val;
-  else m.gB=val;
-  updateTable();
-  saveState();
+  const val=(value===""?null:parseInt(value,10));
+  if(side==="A") m.gA=val; else m.gB=val;
+  updateTable(); saveState();
+  renderMatches(); renderGuidedMatch();
+}
+
+function updateScore(e){
+  const id=parseInt(e.target.dataset.id,10);
+  const side=e.target.dataset.team;
+  const val=e.target.value===""?null:parseInt(e.target.value,10);
+  const m=matches.find(x=>x.id===id);
+  if(!m) return;
+  if(side==="A") m.gA=val; else m.gB=val;
+  if(m === matches[currentMatchIndex]) renderGuidedMatch();
+  updateTable(); saveState();
+}
+
+function findFirstUnplayedIndex(){
+  for(let i=0;i<matches.length;i++){
+    if(matches[i].gA==null || matches[i].gB==null) return i;
+  }
+  return -1;
 }
 
 function updateTable(){
@@ -447,31 +436,21 @@ function updateTable(){
   for(let i=0;i<teamCount;i++){
     stats.push({name:teamNames[i],sp:0,s:0,u:0,n:0,tPlus:0,tMinus:0,pkt:0});
   }
-
   matches.forEach(m=>{
     if(m.gA==null||m.gB==null) return;
-    let A=stats[m.A];
-    let B=stats[m.B];
-
+    let A=stats[m.A], B=stats[m.B];
     A.sp++;B.sp++;
     A.tPlus+=m.gA;A.tMinus+=m.gB;
     B.tPlus+=m.gB;B.tMinus+=m.gA;
-
     if(m.gA>m.gB){A.s++;B.n++;A.pkt+=3;}
     else if(m.gA<m.gB){B.s++;A.n++;B.pkt+=3;}
     else {A.u++;B.u++;A.pkt++;B.pkt++;}
   });
-
-  stats.sort((a,b)=>
-    b.pkt-a.pkt ||
-    (b.tPlus-b.tMinus)-(a.tPlus-a.tMinus) ||
-    b.tPlus-a.tPlus
-  );
+  stats.sort((a,b)=> b.pkt-a.pkt || (b.tPlus-b.tMinus)-(a.tPlus-a.tMinus) || b.tPlus-a.tPlus );
 
   const body=document.getElementById("standingsBody");
   const winner=document.getElementById("winnerBox");
   body.innerHTML="";
-
   let hasLeader=false;
 
   stats.forEach((s,i)=>{
@@ -482,29 +461,13 @@ function updateTable(){
       winner.textContent="🏆 Führender:  "+s.name+"  – "+s.pkt+" Punkte, Diff "+(s.tPlus-s.tMinus);
       hasLeader=true;
     }
-    const add=t=>{
-      let td=document.createElement("td");
-      td.textContent=t;
-      tr.appendChild(td);
-    };
-    add(i+1);
-    add(s.name);
-    add(s.sp);
-    add(s.s);
-    add(s.u);
-    add(s.n);
-    add(s.tPlus);
-    add(s.tMinus);
-    add(s.tPlus-s.tMinus);
-    add(s.pkt);
-
+    [i+1,s.name,s.sp,s.s,s.u,s.n,s.tPlus,s.tMinus,(s.tPlus-s.tMinus),s.pkt].forEach(v=>{
+      let td=document.createElement("td"); td.textContent=v; tr.appendChild(td);
+    });
     body.appendChild(tr);
   });
 
-  if(!hasLeader){
-    winner.style.display="none";
-    winner.textContent="";
-  }
+  if(!hasLeader){ winner.style.display="none"; winner.textContent=""; }
 }
 </script>
 </body>
