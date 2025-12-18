@@ -397,8 +397,8 @@ function renderGuidedMatch(){
 
   vs.innerHTML = `${Ahtml} <span style="opacity:.7;font-weight:900;">vs</span> ${Bhtml}`;
 
-  inA.value=(m.gA==null)?"":m.gA;
-  inB.value=(m.gB==null)?"":m.gB;
+  inA.value = (m.gA==null) ? 0 : m.gA;
+  inB.value = (m.gB==null) ? 0 : m.gB;
 
   prev.disabled=(currentMatchIndex===0);
   next.disabled=(currentMatchIndex===matches.length-1);
@@ -472,3 +472,4 @@ function updateTable(){
 </script>
 </body>
 </html>
+
