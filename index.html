@@ -77,6 +77,25 @@ header{
 }
 .card h2{margin:0 0 10px;font-size:1.2rem;}
 
+/* SETTINGS ROW (Button rechts) */
+.settings-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.settings-row .reset-btn{margin-left:auto;}
+.reset-btn{
+  border:0;
+  border-radius:10px;
+  padding:10px 14px;
+  background:#c0392b;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+.reset-btn:active{transform:translateY(1px);}
+
 /* TEAM INPUT GRID */
 .team-grid{
   display:grid;
@@ -129,10 +148,10 @@ th{background:#eaeffd;font-weight:600;}
 @media(max-width:768px){
   .header-center{flex-direction:column;text-align:center;}
   .logo-wrapper{width:80px;height:80px;}
-  .logo-wrapper img{object-fit:cover;}
   .header-photo{height:80px;}
   .header-text h1{font-size:1.3rem;}
   .header-text p{font-size:.8rem;}
+  .settings-row .reset-btn{margin-left:0;width:100%;}
 }
 @media(max-width:480px){
   #introText{font-size:1.6rem;margin:14px 10px 0;}
@@ -162,13 +181,21 @@ th{background:#eaeffd;font-weight:600;}
 <div class="container">
   <div class="card">
     <h2>Einstellungen</h2>
-    <label for="teamCount">Anzahl Teams</label>
-    <select id="teamCount">
-      <option value="3">3 Teams</option>
-      <option value="4">4 Teams</option>
-      <option value="5">5 Teams</option>
-      <option value="6">6 Teams</option>
-    </select>
+
+    <div class="settings-row">
+      <div>
+        <label for="teamCount">Anzahl Teams</label>
+        <select id="teamCount">
+          <option value="3">3 Teams</option>
+          <option value="4">4 Teams</option>
+          <option value="5">5 Teams</option>
+          <option value="6">6 Teams</option>
+        </select>
+      </div>
+
+      <button class="reset-btn" id="resetBtn" type="button">Neues Turnier starten</button>
+    </div>
+
     <h3 style="margin:10px 0 4px;font-size:1rem;">Mannschaftsnamen</h3>
     <div id="teamInputs" class="team-grid"></div>
   </div>
@@ -206,6 +233,8 @@ th{background:#eaeffd;font-weight:600;}
 </div>
 
 <script>
+const STORAGE_KEY="usv_turnier_state_v1";
+
 let teamCount=3,teamNames=[],matches=[];
 
 window.onload=function(){
@@ -218,45 +247,95 @@ window.onload=function(){
 
 document.addEventListener("DOMContentLoaded",()=>{
   document.getElementById("teamCount").addEventListener("change",updateTeamCount);
-  updateTeamCount();
+
+  document.getElementById("resetBtn").addEventListener("click",()=>{
+    if(confirm("Neues Turnier starten? Alle Ergebnisse gehen verloren.")){
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+  });
+
+  // 1) State laden (falls vorhanden)
+  const loaded = loadState();
+  // 2) UI initialisieren
+  document.getElementById("teamCount").value = String(teamCount);
+  buildInputs();
+  buildMatchesBerger(loaded);
+  renderMatches();
+  updateTable();
 });
+
+function saveState(){
+  try{
+    const state = {
+      v: 1,
+      teamCount,
+      teamNames,
+      scores: matches.map(m => ({id:m.id, gA:m.gA, gB:m.gB}))
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){}
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    const state = JSON.parse(raw);
+    if(!state || state.v!==1) return null;
+    if(typeof state.teamCount === "number") teamCount = state.teamCount;
+    if(Array.isArray(state.teamNames)) teamNames = state.teamNames;
+    return state;
+  }catch(e){
+    return null;
+  }
+}
 
 function updateTeamCount(){
   const select=document.getElementById("teamCount");
   const newCount=parseInt(select.value);
+
   teamCount=newCount;
+  teamNames=[];
+  matches=[];
   buildInputs();
-  buildMatchesBerger();
+  buildMatchesBerger(null);
+  renderMatches();
   updateTable();
+  saveState();
 }
 
 function buildInputs(){
   const box=document.getElementById("teamInputs");
   box.innerHTML="";
-  teamNames=[];
+
+  if(!Array.isArray(teamNames) || teamNames.length!==teamCount){
+    teamNames = Array.from({length:teamCount}, (_,i)=>"Team "+(i+1));
+  }
+
   for(let i=0;i<teamCount;i++){
-    let n="Team "+(i+1);
-    teamNames.push(n);
     let inp=document.createElement("input");
-    inp.value=n;inp.dataset.id=i;
+    inp.value=teamNames[i] || ("Team "+(i+1));
+    inp.dataset.id=i;
     inp.oninput=e=>{
       const val=e.target.value.trim();
-      teamNames[i]=val || ("Team "+(i+1));
+      teamNames[i]= val || ("Team "+(i+1));
       renderMatches();
       updateTable();
+      saveState();
     };
     box.appendChild(inp);
   }
 }
 
 /* Berger-Rundenplan (Round-Robin) */
-function buildMatchesBerger(){
+function buildMatchesBerger(loadedState){
   matches=[];
   let indices=[];
   for(let i=0;i<teamCount;i++) indices.push(i);
 
   if(teamCount % 2 === 1){
-    indices.push(null); // spielfrei
+    indices.push(null);
   }
   const n=indices.length;
   const rounds=n-1;
@@ -281,18 +360,26 @@ function buildMatchesBerger(){
 
   let id=1;
   for(let r=0;r<rounds;r++){
-    let pairs=roundsArr[r];
-    pairs.forEach(p=>{
+    roundsArr[r].forEach(p=>{
       matches.push({id:id++,A:p.A,B:p.B,round:"Hinrunde "+(r+1),gA:null,gB:null});
     });
   }
   for(let r=0;r<rounds;r++){
-    let pairs=roundsArr[r];
-    pairs.forEach(p=>{
+    roundsArr[r].forEach(p=>{
       matches.push({id:id++,A:p.B,B:p.A,round:"Rückrunde "+(r+1),gA:null,gB:null});
     });
   }
-  renderMatches();
+
+  if(loadedState && Array.isArray(loadedState.scores)){
+    const map = new Map(loadedState.scores.map(s=>[s.id, s]));
+    matches.forEach(m=>{
+      const s = map.get(m.id);
+      if(s){
+        m.gA = (s.gA===null || s.gA===undefined) ? null : s.gA;
+        m.gB = (s.gB===null || s.gB===undefined) ? null : s.gB;
+      }
+    });
+  }
 }
 
 function renderMatches(){
@@ -300,15 +387,15 @@ function renderMatches(){
   body.innerHTML="";
   matches.forEach((m,i)=>{
     let tr=document.createElement("tr");
-    const add=t=>{
+    const addText=t=>{
       let td=document.createElement("td");
       td.textContent=t;
       tr.appendChild(td);
     };
-    add(i+1);
-    add(teamNames[m.A] || ("Team "+(m.A+1)));
-    add("vs");
-    add(teamNames[m.B] || ("Team "+(m.B+1)));
+    addText(i+1);
+    addText(teamNames[m.A] || ("Team "+(m.A+1)));
+    addText("vs");
+    addText(teamNames[m.B] || ("Team "+(m.B+1)));
 
     let rd=document.createElement("td");
     rd.className="round";
@@ -318,22 +405,24 @@ function renderMatches(){
     let tdA=document.createElement("td");
     let inA=document.createElement("input");
     inA.type="number";
+    inA.inputMode="numeric";
     inA.className="score-input";
     inA.dataset.id=m.id;
     inA.dataset.team="A";
     if(m.gA!=null) inA.value=m.gA;
-    inA.oninput=updateScore;
+    inA.addEventListener("input", updateScore);
     tdA.appendChild(inA);
     tr.appendChild(tdA);
 
     let tdB=document.createElement("td");
     let inB=document.createElement("input");
     inB.type="number";
+    inB.inputMode="numeric";
     inB.className="score-input";
     inB.dataset.id=m.id;
     inB.dataset.team="B";
     if(m.gB!=null) inB.value=m.gB;
-    inB.oninput=updateScore;
+    inB.addEventListener("input", updateScore);
     tdB.appendChild(inB);
     tr.appendChild(tdB);
 
@@ -350,6 +439,7 @@ function updateScore(e){
   if(side==="A") m.gA=val;
   else m.gB=val;
   updateTable();
+  saveState();
 }
 
 function updateTable(){
