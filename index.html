@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 <title>USV St. Marein U14 – Turnierplan</title>
 
 <style>
@@ -53,64 +53,35 @@ body{
 @keyframes introFade{0%{opacity:1}100%{opacity:0;visibility:hidden}}
 #main{opacity:0;display:none;transition:opacity 1.2s ease}
 
-/* HEADER wie Screenshot */
-header{
-  background:var(--primary);
-  color:#fff;
-  padding:18px 16px;
-}
+/* HEADER */
+header{background:var(--primary);color:#fff;padding:18px 16px}
 .header-inner{
-  max-width:1180px;
-  margin:0 auto;
-  display:flex;
-  align-items:center;
-  gap:18px;
+  max-width:1180px;margin:0 auto;
+  display:flex;align-items:center;gap:18px
 }
-.header-left{min-width:120px}
-
-/* LOGO GRÖSSER + GLOW WIE FRÜHER */
+.header-left{min-width:130px}
 .logo{
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  overflow:hidden;
+  width:110px;height:110px;border-radius:50%;overflow:hidden;
   animation:logoGlowStrong 3s ease-in-out infinite;
 }
 .logo img{width:100%;height:100%;object-fit:cover;display:block}
 @keyframes logoGlowStrong{
   0%,100%{
-    box-shadow:
-      0 0 0 3px rgba(255,255,255,.25),
-      0 0 10px rgba(255,255,255,.20);
+    box-shadow:0 0 0 3px rgba(255,255,255,.25), 0 0 10px rgba(255,255,255,.20);
     filter:brightness(1);
   }
   50%{
-    box-shadow:
-      0 0 0 3px rgba(255,255,255,.30),
-      0 0 24px rgba(255,255,255,.85);
+    box-shadow:0 0 0 3px rgba(255,255,255,.30), 0 0 24px rgba(255,255,255,.85);
     filter:brightness(1.08);
   }
 }
-
 .header-center{flex:1;text-align:center}
-.header-center h1{
-  margin:0;
-  font-size:2.0rem;
-  font-weight:900;
-  letter-spacing:.2px;
-}
-.header-center p{
-  margin:8px 0 0;
-  opacity:.95;
-  font-size:1.0rem;
-}
+.header-center h1{margin:0;font-size:2.0rem;font-weight:900}
+.header-center p{margin:8px 0 0;opacity:.95;font-size:1.0rem}
 .header-right{min-width:240px;display:flex;justify-content:flex-end}
 .header-photo{
-  width:230px;
-  height:110px;
-  border-radius:12px;
-  object-fit:cover;
-  box-shadow:0 10px 18px rgba(0,0,0,.22);
+  width:230px;height:110px;border-radius:12px;object-fit:cover;
+  box-shadow:0 10px 18px rgba(0,0,0,.22)
 }
 
 /* Layout */
@@ -124,45 +95,20 @@ header{
 }
 .card h2{margin:0 0 14px;font-size:1.35rem}
 
-/* SETTINGS – wie Screenshot */
-.settings-row{
-  display:flex;
-  align-items:center;
-  gap:16px;
-  flex-wrap:wrap;
-}
-.field{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.field label{font-weight:700}
-select{
-  padding:7px 10px;
-  border-radius:10px;
-  border:1px solid #ddd;
-  background:#fff;
-}
+/* SETTINGS */
+.settings-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.field{display:flex;align-items:center;gap:10px}
+.field label{font-weight:900}
+select{padding:7px 10px;border-radius:10px;border:1px solid #ddd;background:#fff}
 .toggle{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 12px;
-  border:1px solid #ddd;
-  border-radius:12px;
-  background:#fafafa;
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border:1px solid #ddd;border-radius:12px;background:#fafafa;
 }
 .toggle input{transform:scale(1.05)}
 .toggle strong{font-weight:900}
 .reset-btn{
-  margin-left:auto;
-  border:0;
-  padding:10px 16px;
-  border-radius:12px;
-  background:var(--danger);
-  color:#fff;
-  font-weight:900;
-  cursor:pointer;
+  margin-left:auto;border:0;padding:10px 16px;border-radius:12px;
+  background:var(--danger);color:#fff;font-weight:900;cursor:pointer;
 }
 .reset-btn:active{transform:translateY(1px)}
 
@@ -174,11 +120,7 @@ select{
   gap:12px;
 }
 .team-grid input{
-  width:100%;
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid #ddd;
-  font-size:1rem;
+  width:100%;padding:10px 12px;border-radius:12px;border:1px solid #ddd;font-size:1rem;
 }
 
 /* Tables */
@@ -188,22 +130,12 @@ th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:center;fon
 th{background:#eef3ff;font-weight:900}
 .round{font-size:.8rem;color:var(--muted)}
 .score-input{
-  width:64px;
-  padding:8px 8px;
-  text-align:center;
-  border-radius:12px;
-  border:1px solid var(--line);
-  font-size:1rem;
+  width:64px;padding:8px 8px;text-align:center;border-radius:12px;border:1px solid var(--line);font-size:1rem;
 }
 .winner-box{
-  display:none;
-  width:100%;
-  padding:10px 12px;
-  border-radius:12px;
+  display:none;width:100%;padding:10px 12px;border-radius:12px;
   background:linear-gradient(90deg,var(--primary),var(--primary2));
-  color:#fff;
-  margin-bottom:10px;
-  font-weight:900;
+  color:#fff;margin-bottom:10px;font-weight:900;
 }
 .leader-row{background:rgba(27,75,143,.12);font-weight:900}
 
@@ -215,38 +147,54 @@ th{background:#eef3ff;font-weight:900}
 .guided-card{display:none}
 .guided-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .guided-top .meta{color:var(--muted);font-weight:700}
+
+/* im Hochformat nebeneinander */
 .guided-vs{
   margin:10px 0 12px;
-  display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  flex-wrap:nowrap;
+  white-space:nowrap;
   font-size:1.25rem;font-weight:900;
 }
+.guided-vs .team-cell{min-width:0}
+.guided-vs .team-cell span, .guided-vs .team-cell{overflow:hidden;text-overflow:ellipsis}
+
+/* Score */
 .score-row{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
 .score-col{display:flex;align-items:center;gap:10px}
 .plus-ball{
-  font-size:1.9rem;
-  cursor:pointer;
-  user-select:none;
-  line-height:1;
-  padding:6px 8px;
-  border-radius:12px;
-  background:#f3f6ff;
-  border:1px solid var(--line);
+  font-size:1.9rem;cursor:pointer;user-select:none;line-height:1;
+  padding:6px 8px;border-radius:12px;background:#f3f6ff;border:1px solid var(--line);
 }
 .plus-ball:active{transform:scale(.97)}
 .score-big{
-  width:92px;
-  padding:10px 10px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  font-size:1.5rem;
-  text-align:center;
+  width:92px;padding:10px 10px;border-radius:14px;border:1px solid var(--line);
+  font-size:1.5rem;text-align:center;
+}
+
+/* TIMER: Reset links, Anzeige Mitte, Minuten rechts; Start & Pause darunter */
+.timer-wrap{
+  display:grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  gap:10px;
+  align-items:center;
+  margin: 10px 0 6px;
+}
+.timer-reset{ grid-column:1; grid-row:1; justify-self:start; }
+.timer-center{ grid-column:2; grid-row:1; justify-self:center; }
+.timer-minutes{ grid-column:3; grid-row:1; justify-self:end; display:flex; align-items:center; gap:8px; }
+.timer-actions{
+  grid-column:2;
+  grid-row:2;
+  justify-self:center;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center;
 }
 
 /* LED TIMER */
-.timer-wrap{
-  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
-  margin:8px 0 4px;
-}
 .timer-display{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-weight: 900;
@@ -292,9 +240,24 @@ th{background:#eef3ff;font-weight:900}
 }
 @media (max-width:520px){
   .team-grid{grid-template-columns:1fr}
-  .header-center h1{font-size:1.4rem}
+  .header-center h1{font-size:1.35rem}
   table{min-width:680px}
   .timer-display{font-size:2.4rem;min-width:160px}
+  .score-big{width:84px}
+  .guided-vs{font-size:1.05rem}
+  .btn{padding:10px 12px}
+}
+
+/* Guided-only: nur aktuelles Spiel */
+body.guided-only header,
+body.guided-only #settingsCard,
+body.guided-only #scheduleCard,
+body.guided-only #standingsCard{
+  display:none !important;
+}
+body.guided-only .container{
+  max-width:680px;
+  margin:12px auto 18px;
 }
 </style>
 </head>
@@ -326,7 +289,7 @@ th{background:#eef3ff;font-weight:900}
 
   <div class="container">
 
-    <div class="card">
+    <div class="card" id="settingsCard">
       <h2>Einstellungen</h2>
 
       <div class="settings-row">
@@ -340,7 +303,7 @@ th{background:#eef3ff;font-weight:900}
           </select>
         </div>
 
-        <label class="toggle" title="Wenn aktiv, wird nur das aktuelle Spiel angezeigt">
+        <label class="toggle" title="Wenn aktiv, wird nur das aktuelle Spiel angezeigt (sonst nichts)">
           <input type="checkbox" id="guidedToggle">
           <span><strong>Geführtes Turnier</strong> (nur aktuelles Spiel)</span>
         </label>
@@ -359,14 +322,24 @@ th{background:#eef3ff;font-weight:900}
       </div>
 
       <div class="timer-wrap">
-        <div class="timer-display" id="timerDisplay">10:00</div>
-        <button class="btn light" id="timerStartPause" type="button">Start</button>
-        <button class="btn light" id="timerReset" type="button">Reset</button>
-        <div class="field" style="gap:8px">
+        <div class="timer-reset">
+          <button class="btn light" id="timerReset" type="button">Reset</button>
+        </div>
+
+        <div class="timer-center">
+          <div class="timer-display" id="timerDisplay">10:00</div>
+        </div>
+
+        <div class="timer-minutes">
           <span style="font-weight:900;color:var(--muted)">Min</span>
           <input id="timerMinutes" type="number" min="1" step="1"
-                 style="width:80px;padding:10px 10px;border-radius:12px;border:1px solid var(--line);text-align:center;font-weight:900"
+                 style="width:78px;padding:10px 10px;border-radius:12px;border:1px solid var(--line);text-align:center;font-weight:900"
                  value="10">
+        </div>
+
+        <div class="timer-actions">
+          <button class="btn light" id="timerStart" type="button">Start</button>
+          <button class="btn light" id="timerPause" type="button">Pause</button>
         </div>
       </div>
 
@@ -390,6 +363,10 @@ th{background:#eef3ff;font-weight:900}
         <button class="btn light" id="prevBtn" type="button">◀ Vorheriges</button>
         <button class="btn secondary" id="nextBtn" type="button">Nächstes ▶</button>
       </div>
+
+      <div style="margin-top:10px;text-align:center">
+        <button class="btn light" id="backToFull" type="button">⬅ Zurück zur Übersicht</button>
+      </div>
     </div>
 
     <div class="card" id="scheduleCard">
@@ -406,7 +383,7 @@ th{background:#eef3ff;font-weight:900}
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="standingsCard">
       <h2>Tabelle</h2>
       <div id="winnerBox" class="winner-box"></div>
 
@@ -437,7 +414,7 @@ window.onload = () => {
 };
 
 /* ========= STATE ========= */
-const STORAGE_KEY="usv_turnier_final_layout_all_v2_logo";
+const STORAGE_KEY="usv_turnier_guided_only_timer_v1";
 
 let teamCount=4;
 let teamNames=[];
@@ -470,7 +447,7 @@ function chirp(freq=1500,d=0.18,vol=0.6){
   osc.start();
   osc.stop(audioCtx.currentTime+d);
 }
-function warningSignal(){ // Beep-Beep
+function warningSignal(){
   chirp(1550,.18,.55);
   setTimeout(()=>chirp(1550,.18,.55),220);
 }
@@ -480,7 +457,7 @@ function whistle(duration=0.45,freq=1200){
   const gain=audioCtx.createGain();
   osc.type="square";
   osc.frequency.value=freq;
-  gain.gain.value=0.75; // LAUT
+  gain.gain.value=0.78; // LAUT
   osc.connect(gain);
   gain.connect(audioCtx.destination);
   osc.start();
@@ -511,13 +488,16 @@ function clearTimerClasses(){
 }
 function updateTimerUI(){
   const disp=document.getElementById("timerDisplay");
-  const btn=document.getElementById("timerStartPause");
+  const startBtn=document.getElementById("timerStart");
+  const pauseBtn=document.getElementById("timerPause");
   const m=curMatch();
-  if(!disp || !btn || !m) return;
+  if(!disp || !startBtn || !pauseBtn || !m) return;
 
   ensureTimer(m.id);
   disp.textContent=fmt(timerRemainingById[m.id]);
-  btn.textContent = timerRunning ? "Pause" : "Start";
+
+  startBtn.disabled = timerRunning;
+  pauseBtn.disabled = !timerRunning;
 }
 function stopTimer(){
   timerRunning=false;
@@ -604,7 +584,10 @@ function loadState(){
 
     if(typeof s.teamCount==="number") teamCount=s.teamCount;
     if(Array.isArray(s.teamNames)) teamNames=s.teamNames;
-    guidedMode=!!s.guidedMode;
+
+    // ✅ WICHTIG: IMMER NORMAL STARTEN (guided NICHT übernehmen)
+    guidedMode=false;
+
     if(Number.isInteger(s.currentMatchIndex)) currentMatchIndex=s.currentMatchIndex;
 
     if(Number.isInteger(s.timerDefaultMinutes) && s.timerDefaultMinutes>0) timerDefaultMinutes=s.timerDefaultMinutes;
@@ -623,7 +606,11 @@ document.addEventListener("DOMContentLoaded",()=>{
   const toggle=document.getElementById("guidedToggle");
 
   sel.value=String(teamCount);
-  toggle.checked=guidedMode;
+
+  // ✅ immer aus beim Start
+  guidedMode=false;
+  toggle.checked=false;
+
   document.getElementById("timerMinutes").value=String(timerDefaultMinutes);
 
   document.getElementById("teamCount").addEventListener("change", ()=>{
@@ -687,13 +674,16 @@ document.addEventListener("DOMContentLoaded",()=>{
 
   document.getElementById("guidedScoreA").addEventListener("input",(e)=>setGuidedScore("A", e.target.value));
   document.getElementById("guidedScoreB").addEventListener("input",(e)=>setGuidedScore("B", e.target.value));
-
   document.getElementById("ballA").addEventListener("click", ()=>incGuided("A"));
   document.getElementById("ballB").addEventListener("click", ()=>incGuided("B"));
 
-  document.getElementById("timerStartPause").addEventListener("click", ()=>{
+  document.getElementById("timerStart").addEventListener("click", ()=>{
     if(!guidedMode) return;
-    if(timerRunning) stopTimer(); else startTimer();
+    startTimer();
+  });
+  document.getElementById("timerPause").addEventListener("click", ()=>{
+    if(!guidedMode) return;
+    stopTimer();
   });
   document.getElementById("timerReset").addEventListener("click", ()=>{
     if(!guidedMode) return;
@@ -707,6 +697,18 @@ document.addEventListener("DOMContentLoaded",()=>{
       saveState();
       updateTimerUI();
     }
+  });
+
+  document.getElementById("backToFull").addEventListener("click", ()=>{
+    guidedMode = false;
+    toggle.checked = false;
+    clearTimerClasses();
+    stopTimer();
+    applyModeUI();
+    renderMatches();
+    renderGuidedMatch();
+    updateTable();
+    saveState();
   });
 
   buildInputs();
@@ -786,17 +788,14 @@ function buildMatchesBerger(loaded){
     });
   }
 
-  if(guidedMode){
-    const idx=findFirstUnplayedIndex();
-    if(idx!==-1) currentMatchIndex=idx;
-  }
   currentMatchIndex=Math.max(0, Math.min(currentMatchIndex, matches.length-1));
 }
 
-/* ========= RENDER ========= */
+/* ========= RENDER / MODE ========= */
 function applyModeUI(){
   document.getElementById("guidedCard").style.display = guidedMode ? "block" : "none";
   document.getElementById("scheduleCard").style.display = guidedMode ? "none" : "block";
+  document.body.classList.toggle("guided-only", guidedMode);
 }
 function teamName(i){ return teamNames[i] || ("Team "+(i+1)); }
 function kickoffSide(m){ return String(m.round).startsWith("Hinrunde") ? "A" : "B"; }
