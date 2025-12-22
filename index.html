@@ -210,17 +210,23 @@ th{background:#eef3ff;font-weight:900}
 .guided-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .guided-top .meta{color:var(--muted);font-weight:700}
 
-/* Hochformat: Teams nebeneinander (erzwingen, auch bei langen Namen) */
+/* Hochformat: Teams nebeneinander */
 .guided-vs{
   margin:10px 0 12px;
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
   align-items:center;
-  column-gap:10px;
-  row-gap:0;
+  gap:10px;
   font-size:1.25rem;
   font-weight:900;
 }
+/* Guided VS: keep teams on ONE line (even portrait) */
+.guided-vs{display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:8px; width:100%; }
+.guided-vs .team-cell{min-width:0; overflow:hidden; white-space:nowrap;}
+.guided-vs .team-cell.left{justify-content:flex-end;}
+.guided-vs .team-cell.right{justify-content:flex-start;}
+.guided-vs .team-name{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block;}
+
 .guided-vs .team-cell{
   min-width:0;
   justify-content:center;
@@ -228,8 +234,9 @@ th{background:#eef3ff;font-weight:900}
   text-overflow:ellipsis;
   white-space:nowrap;
 }
-.guided-vs .team-cell{max-width:44vw; overflow:hidden; text-overflow:ellipsis}
-.guided-vs .vs-mid{opacity:.7; font-weight:900; white-space:nowrap}
+
+.guided-vs .team-cell{max-width:42vw; overflow:hidden; text-overflow:ellipsis}
+.guided-vs .vs-mid{opacity:.7; font-weight:900}
 
 /* Score */
 .score-row{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
@@ -1015,11 +1022,11 @@ function renderGuidedMatch(){
 
   const Aname=teamName(m.A), Bname=teamName(m.B);
   const Ahtml = (kick==="A")
-    ? `<span class="team-cell"><span class="kick">⚽</span>${escapeHtml(Aname)}</span>`
-    : `<span class="team-cell">${escapeHtml(Aname)}</span>`;
+    ? `<span class="team-cell left"><span class="kick">⚽</span><span class="team-name">${escapeHtml(Aname)}</span></span>`
+    : `<span class="team-cell left"><span class="team-name">${escapeHtml(Aname)}</span></span>`;
   const Bhtml = (kick==="B")
-    ? `<span class="team-cell"><span class="kick">⚽</span>${escapeHtml(Bname)}</span>`
-    : `<span class="team-cell">${escapeHtml(Bname)}</span>`;
+    ? `<span class="team-cell right"><span class="kick">⚽</span><span class="team-name">${escapeHtml(Bname)}</span></span>`
+    : `<span class="team-cell right"><span class="team-name">${escapeHtml(Bname)}</span></span>`;
 
   document.getElementById("guidedVs").innerHTML =
     `${Ahtml} <span class="vs-mid">vs</span> ${Bhtml}`;
