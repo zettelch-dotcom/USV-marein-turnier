@@ -377,6 +377,10 @@ body.guided-only .container{ max-width:720px; margin:12px auto 18px; }
   #guidedCard .plus-ball{font-size:1.7rem !important; padding:5px 7px !important;}
 }
 
+
+/* Hide extra settings */
+.reset-btn{display:none !important;}
+
 </style>
 </head>
 
@@ -425,7 +429,68 @@ body.guided-only .container{ max-width:720px; margin:12px auto 18px; }
             </div>
 <div class="field">
               <label for="timerMinutes">Spielzeit (Min)</label>
-              <input id="timerMinutes" class="select-like" type="number" min="1" step="1" value="10" style="width:110px;text-align:center" />
+              <select id="timerMinutes" class="select-like" style="width:110px;text-align:center">
+  <option value="1">1 Min</option>
+  <option value="2">2 Min</option>
+  <option value="3">3 Min</option>
+  <option value="4">4 Min</option>
+  <option value="5">5 Min</option>
+  <option value="6">6 Min</option>
+  <option value="7">7 Min</option>
+  <option value="8">8 Min</option>
+  <option value="9">9 Min</option>
+  <option value="10" selected>10 Min</option>
+  <option value="11">11 Min</option>
+  <option value="12">12 Min</option>
+  <option value="13">13 Min</option>
+  <option value="14">14 Min</option>
+  <option value="15">15 Min</option>
+  <option value="16">16 Min</option>
+  <option value="17">17 Min</option>
+  <option value="18">18 Min</option>
+  <option value="19">19 Min</option>
+  <option value="20">20 Min</option>
+  <option value="21">21 Min</option>
+  <option value="22">22 Min</option>
+  <option value="23">23 Min</option>
+  <option value="24">24 Min</option>
+  <option value="25">25 Min</option>
+  <option value="26">26 Min</option>
+  <option value="27">27 Min</option>
+  <option value="28">28 Min</option>
+  <option value="29">29 Min</option>
+  <option value="30">30 Min</option>
+  <option value="31">31 Min</option>
+  <option value="32">32 Min</option>
+  <option value="33">33 Min</option>
+  <option value="34">34 Min</option>
+  <option value="35">35 Min</option>
+  <option value="36">36 Min</option>
+  <option value="37">37 Min</option>
+  <option value="38">38 Min</option>
+  <option value="39">39 Min</option>
+  <option value="40">40 Min</option>
+  <option value="41">41 Min</option>
+  <option value="42">42 Min</option>
+  <option value="43">43 Min</option>
+  <option value="44">44 Min</option>
+  <option value="45">45 Min</option>
+  <option value="46">46 Min</option>
+  <option value="47">47 Min</option>
+  <option value="48">48 Min</option>
+  <option value="49">49 Min</option>
+  <option value="50">50 Min</option>
+  <option value="51">51 Min</option>
+  <option value="52">52 Min</option>
+  <option value="53">53 Min</option>
+  <option value="54">54 Min</option>
+  <option value="55">55 Min</option>
+  <option value="56">56 Min</option>
+  <option value="57">57 Min</option>
+  <option value="58">58 Min</option>
+  <option value="59">59 Min</option>
+  <option value="60">60 Min</option>
+</select>
             </div>
           </div>
 
@@ -792,6 +857,19 @@ document.addEventListener("DOMContentLoaded",()=>{
   toggle.checked=false;
 
   timerMinEl.value=String(timerDefaultMinutes);
+
+// Ensure timerMinutes dropdown contains the stored/default value (in case it's not in the list)
+(function ensureTimerOption(){
+  const el = document.getElementById("timerMinutes");
+  if(!el || el.tagName !== "SELECT") return;
+  const v = String(timerDefaultMinutes);
+  if([...el.options].some(o => o.value === v)) return;
+  const opt = document.createElement("option");
+  opt.value = v;
+  opt.textContent = v + " Min";
+  el.appendChild(opt);
+})();
+
 
   sel.addEventListener("change", ()=>{
     teamCount=parseInt(sel.value,10);
