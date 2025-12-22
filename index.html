@@ -340,6 +340,43 @@ body.guided-only .container{ max-width:720px; margin:12px auto 18px; }
   width:auto !important;
 }
 
+/* ===== Portrait Fix: Aktuelles Spiel (Teams + Spielstände nebeneinander) ===== */
+/* Teams (oben) immer in EINER Zeile, mit Ellipsis bei langen Namen */
+#guidedVs{
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:8px !important;
+  white-space:nowrap !important;
+}
+#guidedVs .team-cell{
+  flex:1 1 0 !important;
+  min-width:0 !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+#guidedVs .vs{
+  flex:0 0 auto !important;
+  opacity:.7 !important;
+  font-weight:900 !important;
+}
+
+/* Spielstände (unten) immer nebeneinander */
+#guidedCard .score-row{
+  flex-wrap:nowrap !important;
+  gap:10px !important;
+}
+#guidedCard .score-col{flex:0 0 auto !important;}
+
+@media (max-width:520px){
+  #guidedVs{gap:6px !important;}
+  #guidedCard .score-row{gap:8px !important;}
+  #guidedCard .score-big{width:78px !important;}
+  #guidedCard .plus-ball{font-size:1.7rem !important; padding:5px 7px !important;}
+}
+
 </style>
 </head>
 
