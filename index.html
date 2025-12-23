@@ -378,8 +378,32 @@ body.guided-only .container{ max-width:720px; margin:12px auto 18px; }
 }
 
 
-/* Hide extra settings */
-.reset-btn{display:none !important;}
+/* Spielplan: Filter + Runden-Gruppierung */
+.schedule-filters{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px}
+.schedule-filters .chip{
+  border:1px solid rgba(0,0,0,.12);
+  background:transparent;
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:700;
+  cursor:pointer;
+}
+.schedule-filters .chip.active{
+  background:rgba(0,0,0,.06);
+}
+tr.round-row td{
+  font-weight:900;
+  background:rgba(0,0,0,.04);
+  border-top:2px solid rgba(0,0,0,.06);
+}
+.badge-mini{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:2px 10px;border-radius:999px;background:rgba(0,0,0,.06);
+  font-weight:900;
+  min-width:46px;
+}
+td.match-col{font-weight:700;}
+td.match-col .kick{margin:0 6px 0 0}
 
 </style>
 </head>
@@ -429,68 +453,7 @@ body.guided-only .container{ max-width:720px; margin:12px auto 18px; }
             </div>
 <div class="field">
               <label for="timerMinutes">Spielzeit (Min)</label>
-              <select id="timerMinutes" class="select-like" style="width:110px;text-align:center">
-  <option value="1">1 Min</option>
-  <option value="2">2 Min</option>
-  <option value="3">3 Min</option>
-  <option value="4">4 Min</option>
-  <option value="5">5 Min</option>
-  <option value="6">6 Min</option>
-  <option value="7">7 Min</option>
-  <option value="8">8 Min</option>
-  <option value="9">9 Min</option>
-  <option value="10" selected>10 Min</option>
-  <option value="11">11 Min</option>
-  <option value="12">12 Min</option>
-  <option value="13">13 Min</option>
-  <option value="14">14 Min</option>
-  <option value="15">15 Min</option>
-  <option value="16">16 Min</option>
-  <option value="17">17 Min</option>
-  <option value="18">18 Min</option>
-  <option value="19">19 Min</option>
-  <option value="20">20 Min</option>
-  <option value="21">21 Min</option>
-  <option value="22">22 Min</option>
-  <option value="23">23 Min</option>
-  <option value="24">24 Min</option>
-  <option value="25">25 Min</option>
-  <option value="26">26 Min</option>
-  <option value="27">27 Min</option>
-  <option value="28">28 Min</option>
-  <option value="29">29 Min</option>
-  <option value="30">30 Min</option>
-  <option value="31">31 Min</option>
-  <option value="32">32 Min</option>
-  <option value="33">33 Min</option>
-  <option value="34">34 Min</option>
-  <option value="35">35 Min</option>
-  <option value="36">36 Min</option>
-  <option value="37">37 Min</option>
-  <option value="38">38 Min</option>
-  <option value="39">39 Min</option>
-  <option value="40">40 Min</option>
-  <option value="41">41 Min</option>
-  <option value="42">42 Min</option>
-  <option value="43">43 Min</option>
-  <option value="44">44 Min</option>
-  <option value="45">45 Min</option>
-  <option value="46">46 Min</option>
-  <option value="47">47 Min</option>
-  <option value="48">48 Min</option>
-  <option value="49">49 Min</option>
-  <option value="50">50 Min</option>
-  <option value="51">51 Min</option>
-  <option value="52">52 Min</option>
-  <option value="53">53 Min</option>
-  <option value="54">54 Min</option>
-  <option value="55">55 Min</option>
-  <option value="56">56 Min</option>
-  <option value="57">57 Min</option>
-  <option value="58">58 Min</option>
-  <option value="59">59 Min</option>
-  <option value="60">60 Min</option>
-</select>
+              <input id="timerMinutes" class="select-like" type="number" min="1" step="1" value="10" style="width:110px;text-align:center" />
             </div>
           </div>
 
@@ -553,12 +516,12 @@ body.guided-only .container{ max-width:720px; margin:12px auto 18px; }
 
     <div class="card" id="scheduleCard">
       <h2>Spielplan</h2>
-      <div class="table-scroll">
+      <div id="scheduleFilters" class="schedule-filters"><button type="button" class="chip active" data-filter="all">Alle</button><button type="button" class="chip" data-filter="open">Offen</button><button type="button" class="chip" data-filter="played">Gespielt</button></div>
+<div class="table-scroll">
         <table>
           <thead>
             <tr>
-              <th>#</th><th>Team A</th><th></th><th>Team B</th><th>Runde</th><th>A</th><th>B</th>
-            </tr>
+              <th>#</th><th>Spiel</th><th>Ergebnis</th></tr>
           </thead>
           <tbody id="matchesBody"></tbody>
         </table>
@@ -604,6 +567,7 @@ let currentMatchIndex=0;
 let audioCtx=null;
 let timerInterval=null;
 let timerRunning=false;
+let runningMatchId=null; // matchId des aktuell laufenden Timers
 let timerDefaultMinutes=10;
 let timerRemainingById={};
 let warnedById={};
@@ -663,6 +627,12 @@ function ensureTimer(matchId){
     timerRemainingById[matchId]=timerDefaultMinutes*60;
   }
 }
+function getRemainingFromEndAt(matchId){
+  const endAt = timerEndAtById[matchId];
+  if(!endAt) return timerRemainingById[matchId] ?? 0;
+  return Math.max(0, Math.ceil((endAt - Date.now())/1000));
+}
+
 function clearTimerClasses(){
   const disp=document.getElementById("timerDisplay");
   if(disp) disp.classList.remove("warn","end");
@@ -675,12 +645,34 @@ function updateTimerUI(){
   if(!disp || !toggle || !reset || !m) return;
 
   ensureTimer(m.id);
-  disp.textContent=fmt(timerRemainingById[m.id]);
 
+  const shownSec = (timerRunning && runningMatchId===m.id)
+    ? getRemainingFromEndAt(m.id)
+    : (timerRemainingById[m.id] ?? 0);
+
+  timerRemainingById[m.id]=shownSec;
+  disp.textContent=fmt(shownSec);
+
+  disp.classList.remove("warn","end");
+  if(shownSec===0){
+    disp.classList.add("end");
+  }else if(shownSec<=60){
+    disp.classList.add("warn");
+  }
+
+  // Buttons: Nur ein Spiel kann gleichzeitig laufen (wie bisher)
+  toggle.disabled=false;
   if(timerRunning){
-    toggle.textContent="Pause";
-    toggle.classList.remove("start");
-    toggle.classList.add("pause","pulsing");
+    if(runningMatchId===m.id){
+      toggle.textContent="Pause";
+      toggle.classList.remove("start");
+      toggle.classList.add("pause","pulsing");
+    }else{
+      toggle.textContent="Läuft…";
+      toggle.disabled=true;
+      toggle.classList.remove("pause","pulsing");
+      toggle.classList.add("start");
+    }
   }else{
     toggle.textContent="Start";
     toggle.classList.remove("pause","pulsing");
@@ -688,39 +680,29 @@ function updateTimerUI(){
   }
 }
 
+
 function applyElapsed(){
-  if(!timerRunning) return;
-  const m=curMatch(); if(!m) return;
-  ensureTimer(m.id);
+  if(!timerRunning || !runningMatchId) return;
 
-  const now=performance.now();
-  if(!lastTickMs) lastTickMs=now;
+  ensureTimer(runningMatchId);
 
-  const elapsedSec = Math.floor((now - lastTickMs)/1000);
-  if(elapsedSec <= 0) return;
+  const remaining = getRemainingFromEndAt(runningMatchId);
+  timerRemainingById[runningMatchId]=remaining;
 
-  lastTickMs += elapsedSec*1000;
-  timerRemainingById[m.id]=Math.max(0, timerRemainingById[m.id]-elapsedSec);
-
-  if(timerRemainingById[m.id] <= 60 && timerRemainingById[m.id] > 0){
-    const disp=document.getElementById("timerDisplay");
-    if(disp){ disp.classList.add("warn"); disp.classList.remove("end"); }
-    if(timerRemainingById[m.id] === 60 && !warnedById[m.id]){
-      warnedById[m.id]=true;
+  if(remaining <= 60 && remaining > 0){
+    if(remaining === 60 && !warnedById[runningMatchId]){
+      warnedById[runningMatchId]=true;
       initAudio();
       warningSignal();
       vibrateWarn();
     }
   }
 
-  if(timerRemainingById[m.id] === 0){
+  if(remaining === 0){
     stopTimer(true);
-    const disp=document.getElementById("timerDisplay");
-    if(disp){
-      disp.classList.remove("warn");
-      disp.classList.add("end");
-    }
-    m.played = true;
+
+    const mm = matches.find(x=>x.id===runningMatchId);
+    if(mm){ mm.played=true; }
     updateTable();
     saveState();
 
@@ -732,32 +714,34 @@ function applyElapsed(){
   updateTimerUI();
 }
 
+
 function stopTimer(keepWake=false){
+  if(timerRunning && runningMatchId){
+    timerRemainingById[runningMatchId] = getRemainingFromEndAt(runningMatchId);
+  }
+
   timerRunning=false;
+  runningMatchId=null;
+
   if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
   lastTickMs=0;
+
   updateTimerUI();
   saveState();
   if(!keepWake) releaseWakeLock();
 }
+
 function startTimer(){
   initAudio();
   if(timerRunning) return;
   const m=curMatch(); if(!m) return;
 
   ensureTimer(m.id);
-  timerRunning=true;
-  lastTickMs=performance.now();
 
-  clearTimerClasses();
-  if(timerRemainingById[m.id] <= 60 && timerRemainingById[m.id] > 0){
-    const disp=document.getElementById("timerDisplay");
-    if(disp) disp.classList.add("warn");
-  }
-  if(timerRemainingById[m.id] === 0){
-    const disp=document.getElementById("timerDisplay");
-    if(disp) disp.classList.add("end");
-  }
+  timerRunning=true;
+  runningMatchId=m.id;
+
+  timerEndAtById[m.id] = Date.now() + (timerRemainingById[m.id] * 1000);
 
   updateTimerUI();
   requestWakeLock();
@@ -769,6 +753,7 @@ function startTimer(){
 
   saveState();
 }
+
 function resetTimerForCurrent(){
   const m=curMatch(); if(!m) return;
   ensureTimer(m.id);
@@ -858,19 +843,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 
   timerMinEl.value=String(timerDefaultMinutes);
 
-// Ensure timerMinutes dropdown contains the stored/default value (in case it's not in the list)
-(function ensureTimerOption(){
-  const el = document.getElementById("timerMinutes");
-  if(!el || el.tagName !== "SELECT") return;
-  const v = String(timerDefaultMinutes);
-  if([...el.options].some(o => o.value === v)) return;
-  const opt = document.createElement("option");
-  opt.value = v;
-  opt.textContent = v + " Min";
-  el.appendChild(opt);
-})();
-
-
   sel.addEventListener("change", ()=>{
     teamCount=parseInt(sel.value,10);
     teamNames=[];
@@ -913,24 +885,19 @@ document.addEventListener("DOMContentLoaded",()=>{
 
   document.getElementById("prevBtn").addEventListener("click", ()=>{
     if(currentMatchIndex>0){
-      clearTimerClasses();
-      stopTimer();
       currentMatchIndex--;
       renderGuidedMatch();
       saveState();
     }
   });
-  document.getElementById("nextBtn").addEventListener("click", ()=>{
+document.getElementById("nextBtn").addEventListener("click", ()=>{
     if(currentMatchIndex<matches.length-1){
-      clearTimerClasses();
-      stopTimer();
       currentMatchIndex++;
       renderGuidedMatch();
       saveState();
     }
   });
-
-  document.getElementById("guidedScoreA").addEventListener("input",(e)=>setGuidedScore("A", e.target.value));
+document.getElementById("guidedScoreA").addEventListener("input",(e)=>setGuidedScore("A", e.target.value));
   document.getElementById("guidedScoreB").addEventListener("input",(e)=>setGuidedScore("B", e.target.value));
   document.getElementById("ballA").addEventListener("click", ()=>incGuided("A"));
   document.getElementById("ballB").addEventListener("click", ()=>incGuided("B"));
@@ -1076,54 +1043,92 @@ function renderMatches(){
   const body=document.getElementById("matchesBody");
   body.innerHTML="";
 
-  matches.forEach((m,i)=>{
-    const kick=kickoffSide(m);
-    const Aname=teamName(m.A), Bname=teamName(m.B);
+  const filter = window.scheduleFilter || "all";
 
-    const tr=document.createElement("tr");
+  // nach Runde gruppieren
+  const byRound = new Map();
+  matches.forEach((mm)=>{ 
+    const r = mm.round ?? 1;
+    if(!byRound.has(r)) byRound.set(r, []);
+    byRound.get(r).push(mm);
+  });
 
-    const td0=document.createElement("td"); td0.textContent=i+1; tr.appendChild(td0);
+  const rounds = Array.from(byRound.keys()).sort((a,b)=>a-b);
 
-    const tdA=document.createElement("td");
-    tdA.innerHTML = (kick==="A")
-      ? `<span class="team-cell"><span class="kick">⚽</span>${escapeHtml(Aname)}</span>`
-      : escapeHtml(Aname);
-    tr.appendChild(tdA);
+  let rowIndex = 0;
 
-    const tdVs=document.createElement("td"); tdVs.textContent="vs"; tr.appendChild(tdVs);
+  rounds.forEach((r)=>{
+    // Runde-Header row
+    const trR=document.createElement("tr");
+    trR.className="round-row";
+    const td=document.createElement("td");
+    td.colSpan=3;
+    td.innerHTML = `Runde ${r} <span class="badge-mini">${byRound.get(r).length}</span>`;
+    trR.appendChild(td);
+    body.appendChild(trR);
 
-    const tdB=document.createElement("td");
-    tdB.innerHTML = (kick==="B")
-      ? `<span class="team-cell"><span class="kick">⚽</span>${escapeHtml(Bname)}</span>`
-      : escapeHtml(Bname);
-    tr.appendChild(tdB);
+    byRound.get(r).forEach((mm)=>{
+      const played = !!mm.played;
+      if(filter==="played" && !played) return;
+      if(filter==="open" && played) return;
 
-    const tdR=document.createElement("td");
-    tdR.className="round";
-    tdR.textContent=m.round;
-    tr.appendChild(tdR);
+      const kick=kickoffSide(mm);
+      const Aname=teamName(mm.A), Bname=teamName(mm.B);
 
-    const tdSA=document.createElement("td");
-    const inA=document.createElement("input");
-    inA.type="number"; inA.inputMode="numeric";
-    inA.className="score-input";
-    inA.value=String(m.gA ?? 0);
-    inA.addEventListener("input",(e)=>updateScore(m.id,"A",e.target.value));
-    tdSA.appendChild(inA);
-    tr.appendChild(tdSA);
+      const tr=document.createElement("tr");
+      tr.className = played ? "played" : "unplayed";
 
-    const tdSB=document.createElement("td");
-    const inB=document.createElement("input");
-    inB.type="number"; inB.inputMode="numeric";
-    inB.className="score-input";
-    inB.value=String(m.gB ?? 0);
-    inB.addEventListener("input",(e)=>updateScore(m.id,"B",e.target.value));
-    tdSB.appendChild(inB);
-    tr.appendChild(tdSB);
+      // #
+      const td0=document.createElement("td");
+      td0.textContent = ++rowIndex;
+      tr.appendChild(td0);
 
-    body.appendChild(tr);
+      // Spiel
+      const tdMatch=document.createElement("td");
+      tdMatch.className="match-col";
+      tdMatch.innerHTML = `${kick==="A" ? '<span class="kick">⚽</span>' : ''}${escapeHtml(Aname)} – ${kick==="B" ? '<span class="kick">⚽</span>' : ''}${escapeHtml(Bname)}`;
+      tr.appendChild(tdMatch);
+
+      // Ergebnis inputs (A : B)
+      const tdRes=document.createElement("td");
+      const inA=document.createElement("input");
+      inA.type="number"; inA.inputMode="numeric";
+      inA.className="score-input";
+      inA.value=String(mm.gA ?? 0);
+      inA.addEventListener("input",(e)=>updateScore(mm.id,"A",e.target.value));
+
+      const sep=document.createElement("span");
+      sep.textContent=" : ";
+      sep.style.fontWeight="900";
+
+      const inB=document.createElement("input");
+      inB.type="number"; inB.inputMode="numeric";
+      inB.className="score-input";
+      inB.value=String(mm.gB ?? 0);
+      inB.addEventListener("input",(e)=>updateScore(mm.id,"B",e.target.value));
+
+      tdRes.appendChild(inA); tdRes.appendChild(sep); tdRes.appendChild(inB);
+      tr.appendChild(tdRes);
+
+      body.appendChild(tr);
+    });
   });
 }
+
+// Filter UI
+(function initScheduleFilters(){
+  const box=document.getElementById("scheduleFilters");
+  if(!box) return;
+  if(window.scheduleFilter==null) window.scheduleFilter="all";
+
+  box.addEventListener("click",(e)=>{
+    const btn=e.target.closest("button[data-filter]");
+    if(!btn) return;
+    window.scheduleFilter = btn.dataset.filter || "all";
+    box.querySelectorAll(".chip").forEach(b=>b.classList.toggle("active", b===btn));
+    renderMatches();
+  });
+})();
 
 function renderGuidedMatch(){
   if(matches.length===0) return;
