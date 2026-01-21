@@ -448,6 +448,40 @@ td.match-col .kick{margin:0 6px 0 0}
   }
 }
 
+
+/* ===== Portrait (alle Breiten): Teams + Ergebnisse IMMER nebeneinander ===== */
+@media (orientation: portrait){
+  /* Aktuelles Spiel + Vorschau: Teams in einer Zeile */
+  #guidedVs, #guidedNextVs{
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:8px !important;
+    white-space:nowrap !important;
+    width:100% !important;
+  }
+  #guidedVs .team-cell, #guidedNextVs .team-cell{
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+  #guidedVs .team-cell.left, #guidedNextVs .team-cell.left{ justify-content:flex-end !important; }
+  #guidedVs .team-cell.right, #guidedNextVs .team-cell.right{ justify-content:flex-start !important; }
+
+  /* Ergebnis-Eingabe: immer nebeneinander */
+  #guidedCard .score-row{
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:10px !important;
+    width:100% !important;
+  }
+  #guidedCard .score-col{ flex:0 0 auto !important; }
+}
+
 </style>
 </head>
 
