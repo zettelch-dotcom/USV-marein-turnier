@@ -482,6 +482,26 @@ td.match-col .kick{margin:0 6px 0 0}
   #guidedCard .score-col{ flex:0 0 auto !important; }
 }
 
+
+/* ===== Spielplan Hochformat: Spiel + Ergebnis nebeneinander ===== */
+@media (orientation: portrait){
+  #scheduleCard table{
+    min-width:0 !important;
+  }
+  #scheduleCard td.match-col{
+    white-space:normal;
+  }
+  #scheduleCard td{
+    vertical-align:middle;
+  }
+  #scheduleCard td:last-child{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+  }
+}
+
 </style>
 </head>
 
