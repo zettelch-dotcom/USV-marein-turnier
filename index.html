@@ -483,12 +483,7 @@ td.match-col .kick{margin:0 6px 0 0}
 }
 
 
-/* ===== Spielplan Hochformat: Spiel + Ergebnis nebeneinander ===== */
-@media (orientation: portrait){
-  #scheduleCard table{
-    min-width:0 !important;
-  }
-  #scheduleCard td.match-col{
+#scheduleCard td.match-col{
     white-space:normal;
   }
   #scheduleCard td{
@@ -499,6 +494,34 @@ td.match-col .kick{margin:0 6px 0 0}
     justify-content:center;
     align-items:center;
     gap:6px;
+  }
+}
+
+
+/* ===== Spielplan Hochformat: Ergebnis immer in EINER Zeile ===== */
+@media (orientation: portrait){
+  /* Tabelle breiter nutzbar und Spalten sinnvoll aufteilen */
+  #scheduleCard .table-scroll{ overflow-x:hidden !important; }
+  #scheduleCard table{ width:100% !important; min-width:0 !important; table-layout:fixed; }
+  #scheduleCard th:nth-child(1), #scheduleCard td:nth-child(1){ width:42px; }
+  #scheduleCard th:nth-child(3), #scheduleCard td:nth-child(3){ width:160px; }
+
+  /* Spielspalte darf umbrechen */
+  #scheduleCard td.match-col{ white-space:normal; }
+
+  /* Ergebniszelle: Flex + kein Umbruch */
+  #scheduleCard td:nth-child(3){
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:6px !important;
+    white-space:nowrap !important;
+  }
+
+  /* Inputs etwas kleiner, damit es sicher passt */
+  #scheduleCard .score-input{
+    width:52px !important;
+    padding:6px 6px !important;
   }
 }
 
