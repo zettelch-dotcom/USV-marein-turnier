@@ -691,60 +691,6 @@ td.match-col .kick{margin:0 6px 0 0}
   max-width:38%;
 }
 
-
-/* === Mobile Fix: Teamnamen sichtbar halten === */
-@media (max-width:520px){
-  .team-box{
-    max-width:44% !important;
-    padding:8px 10px !important;
-  }
-  .team-box span{
-    font-size:0.95rem !important;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-}
-
-
-/* === Hochformat Fix 2: Teamnamen IMMER sichtbar (unabhängig von Pixelbreite) === */
-@media (orientation: portrait){
-  .teams-row{
-    justify-content:center !important;
-    gap:6px !important;
-  }
-  /* Team-Boxen dürfen breiter werden */
-  .team-box{
-    max-width:48% !important;
-    flex:0 1 48% !important;
-    min-width:120px !important;
-    padding:8px 10px !important;
-  }
-  /* Text-Span im Teamnamen bekommt Ellipsis (nicht der Container) */
-  .team-name-line{
-    overflow:visible !important;
-    text-overflow:clip !important;
-    white-space:nowrap !important;
-  }
-  .team-name-line span[title]{
-    flex:1 1 auto !important;
-    min-width:0 !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-    display:block !important;
-    font-size:1.02rem !important;
-  }
-  /* Kick-Icon nie zusammenschrumpfen */
-  .kick-mini{ flex:0 0 auto !important; }
-  /* Scores minimal schmaler, damit Namen Platz haben */
-  .score-input.score-mini{
-    width:48px !important;
-    height:40px !important;
-    font-size:1.35rem !important;
-  }
-  .vs-pill{ min-width:34px !important; }
-}
-
 </style>
 </head>
 
