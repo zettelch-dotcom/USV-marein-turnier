@@ -415,6 +415,39 @@ td.match-col .kick{margin:0 6px 0 0}
 #scheduleCard .table-scroll{ width:100%; }
 #scheduleCard table{ width:100%; min-width:0; table-layout:auto; }
 
+
+/* ===== Hochformat Fix: Teams + Ergebnis nebeneinander erzwingen ===== */
+@media (max-width:520px){
+
+  /* Teams (oben) nebeneinander, kein Umbruch */
+  #guidedVs{
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:8px !important;
+    white-space:nowrap !important;
+  }
+  #guidedVs .team-cell{
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+
+  /* Ergebnis (unten) nebeneinander, kein Umbruch */
+  #guidedCard .score-row{
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:10px !important;
+  }
+  #guidedCard .score-col{
+    flex:0 0 auto !important;
+  }
+}
+
 </style>
 </head>
 
