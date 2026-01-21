@@ -187,7 +187,8 @@ select{padding:7px 10px;border-radius:10px;border:1px solid #ddd;background:#fff
 
 /* Tables */
 .table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;min-width:760px}
+/* WICHTIG: min-width entfernt, damit im Hochformat kein Horizontal-Scroll erzwungen wird */
+table{width:100%;border-collapse:collapse;min-width:0}
 th,td{padding:10px 8px;border-bottom:1px solid rgba(0,0,0,.08);text-align:center;font-size:.95rem}
 th{background:#eef3ff;font-weight:900}
 .round{font-size:.8rem;color:var(--muted)}
@@ -315,7 +316,6 @@ th{background:#eef3ff;font-weight:900}
 
   .team-grid{grid-template-columns:1fr}
   .header-center h1{font-size:1.35rem}
-  table{min-width:680px}
   .timer-display{font-size:3.1rem;min-width:190px}
   .score-big{width:86px}
   .guided-vs{font-size:1.05rem}
@@ -405,6 +405,50 @@ tr.round-row td{
 td.match-col{font-weight:700;}
 td.match-col .kick{margin:0 6px 0 0}
 
+/* ===== Spielplan Hochformat: KEIN links/rechts Scroll, eine Zeile pro Spiel ===== */
+@media (max-width: 520px){
+  .table-scroll{ overflow-x: hidden !important; }
+
+  th, td{ white-space: normal; }
+
+  /* Jede Match-Zeile in vertikale Struktur: # oben, Spiel, dann Ergebnis */
+  tbody tr:not(.round-row){
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:6px;
+    padding:10px 12px;
+  }
+
+  tbody tr:not(.round-row) td{ border-bottom:0; padding:0; }
+
+  /* # */
+  tbody tr:not(.round-row) td:nth-child(1){
+    font-size:.8rem;
+    opacity:.6;
+    text-align:left;
+  }
+
+  /* Spiel */
+  tbody tr:not(.round-row) td:nth-child(2){
+    font-weight:900;
+    font-size:1rem;
+    text-align:left;
+  }
+
+  /* Ergebnis */
+  tbody tr:not(.round-row) td:nth-child(3){
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    padding-top:6px;
+  }
+
+  .score-input{
+    width:52px;
+    padding:6px 6px;
+  }
+}
 </style>
 </head>
 
@@ -769,17 +813,12 @@ async function requestWakeLock(){
   try{
     if(!("wakeLock" in navigator)) return;
     wakeLock = await navigator.wakeLock.request("screen");
-    if(pill){ pill.style.display="inline-block"; }
-    wakeLock.addEventListener("release", ()=>{
-      if(pill2){ pill2.style.display="none"; }
-      wakeLock=null;
-    });
+    wakeLock.addEventListener("release", ()=>{ wakeLock=null; });
   }catch(e){}
 }
 async function releaseWakeLock(){
   try{ if(wakeLock){ await wakeLock.release(); } }catch(e){}
   wakeLock=null;
-  if(pill){ pill.style.display="none"; }
 }
 
 document.addEventListener("visibilitychange", ()=>{
@@ -1053,7 +1092,20 @@ function renderMatches(){
     byRound.get(r).push(mm);
   });
 
-  const rounds = Array.from(byRound.keys()).sort((a,b)=>a-b);
+  // Sortierung: Hinrunde 1..n, dann Rückrunde 1..n
+  const rounds = Array.from(byRound.keys()).sort((a,b)=>{
+    const pa = parseRoundKey(a);
+    const pb = parseRoundKey(b);
+    return (pa.phase - pb.phase) || (pa.no - pb.no);
+  });
+
+  function parseRoundKey(r){
+    const s = String(r);
+    const phase = s.startsWith("Hinrunde") ? 0 : 1;
+    const m = s.match(/(\d+)/);
+    const no = m ? parseInt(m[1],10) : 0;
+    return {phase, no};
+  }
 
   let rowIndex = 0;
 
@@ -1063,7 +1115,7 @@ function renderMatches(){
     trR.className="round-row";
     const td=document.createElement("td");
     td.colSpan=3;
-    td.innerHTML = `Runde ${r} <span class="badge-mini">${byRound.get(r).length}</span>`;
+    td.innerHTML = `${escapeHtml(r)} <span class="badge-mini">${byRound.get(r).length}</span>`;
     trR.appendChild(td);
     body.appendChild(trR);
 
