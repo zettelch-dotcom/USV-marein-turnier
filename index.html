@@ -416,113 +416,130 @@ td.match-col .kick{margin:0 6px 0 0}
 #scheduleCard table{ width:100%; min-width:0; table-layout:auto; }
 
 
-/* ===== Hochformat Fix: Teams + Ergebnis nebeneinander erzwingen ===== */
-@media (max-width:520px){
+/* ===== Spielplan NEU (Karten) – kein Links/Rechts-Scroll, mit Anstoß + Links/Rechts ===== */
+#matchesList{ display:flex; flex-direction:column; gap:12px; }
+.round-block{
+  background: linear-gradient(90deg, rgba(27,75,143,.14), rgba(47,110,209,.14));
+  border:1px solid rgba(0,0,0,.06);
+  border-radius:14px;
+  padding:10px 12px;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.round-block .badge-mini{ background:rgba(0,0,0,.06); }
 
-  /* Teams (oben) nebeneinander, kein Umbruch */
-  #guidedVs{
-    display:flex !important;
-    flex-wrap:nowrap !important;
-    align-items:center !important;
-    justify-content:space-between !important;
-    gap:8px !important;
-    white-space:nowrap !important;
-  }
-  #guidedVs .team-cell{
-    flex:1 1 0 !important;
-    min-width:0 !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-  }
-
-  /* Ergebnis (unten) nebeneinander, kein Umbruch */
-  #guidedCard .score-row{
-    display:flex !important;
-    flex-wrap:nowrap !important;
-    justify-content:center !important;
-    align-items:center !important;
-    gap:10px !important;
-  }
-  #guidedCard .score-col{
-    flex:0 0 auto !important;
-  }
+.match-card{
+  background: rgba(255,255,255,.96);
+  border:1px solid rgba(0,0,0,.10);
+  border-radius:16px;
+  padding:12px 12px 14px;
+  box-shadow:0 10px 18px rgba(0,0,0,.08);
+  overflow:hidden;
+  position:relative;
+}
+.match-card::before{
+  content:"";
+  display:block;
+  height:6px;
+  border-radius:999px;
+  margin:-12px -12px 10px;
+  background: linear-gradient(90deg, rgba(34,197,94,.85), rgba(34,197,94,.30)); /* offen */
+}
+.match-card.played::before{
+  background: linear-gradient(90deg, rgba(59,130,246,.85), rgba(59,130,246,.30)); /* gespielt */
+}
+.match-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  color: var(--muted);
+  font-weight:800;
+  font-size:.9rem;
+  margin-bottom:10px;
+}
+.match-status{
+  padding:4px 10px;
+  border-radius:999px;
+  font-weight:900;
+  border:1px solid rgba(0,0,0,.08);
+  background: rgba(34,197,94,.14);
+  color:#166534;
+}
+.match-card.played .match-status{
+  background: rgba(59,130,246,.14);
+  color:#1e3a8a;
 }
 
-
-/* ===== Portrait (alle Breiten): Teams + Ergebnisse IMMER nebeneinander ===== */
-@media (orientation: portrait){
-  /* Aktuelles Spiel + Vorschau: Teams in einer Zeile */
-  #guidedVs, #guidedNextVs{
-    display:flex !important;
-    flex-wrap:nowrap !important;
-    align-items:center !important;
-    justify-content:space-between !important;
-    gap:8px !important;
-    white-space:nowrap !important;
-    width:100% !important;
-  }
-  #guidedVs .team-cell, #guidedNextVs .team-cell{
-    flex:1 1 0 !important;
-    min-width:0 !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-  }
-  #guidedVs .team-cell.left, #guidedNextVs .team-cell.left{ justify-content:flex-end !important; }
-  #guidedVs .team-cell.right, #guidedNextVs .team-cell.right{ justify-content:flex-start !important; }
-
-  /* Ergebnis-Eingabe: immer nebeneinander */
-  #guidedCard .score-row{
-    display:flex !important;
-    flex-wrap:nowrap !important;
-    justify-content:center !important;
-    align-items:center !important;
-    gap:10px !important;
-    width:100% !important;
-  }
-  #guidedCard .score-col{ flex:0 0 auto !important; }
+.teams-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.team-box{
+  flex:1 1 0;
+  min-width:0;
+  padding:10px 10px;
+  border-radius:14px;
+  background: rgba(0,0,0,.03);
+  border:1px solid rgba(0,0,0,.06);
+}
+.team-name-line{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.side-label{
+  margin-top:4px;
+  font-size:.78rem;
+  color: var(--muted);
+  font-weight:800;
+}
+.vs-pill{
+  flex:0 0 auto;
+  padding:6px 10px;
+  border-radius:999px;
+  background: rgba(0,0,0,.06);
+  font-weight:900;
+  opacity:.85;
 }
 
-
-#scheduleCard td.match-col{
-    white-space:normal;
-  }
-  #scheduleCard td{
-    vertical-align:middle;
-  }
-  #scheduleCard td:last-child{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:6px;
-  }
+.kick-mini{
+  font-size:1.05rem;
+  line-height:1;
 }
+.kick-mini.hidden{ visibility:hidden; }
 
+.score-row-schedule{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  white-space:nowrap;
+}
+.score-row-schedule .score-input{
+  width:66px;
+  padding:10px 8px;
+  font-size:1.2rem;
+  font-weight:900;
+  border-radius:14px;
+  border:1px solid rgba(0,0,0,.10);
+  background: rgba(255,255,255,.98);
+}
+.score-row-schedule .sep{ font-weight:900; opacity:.75; }
 
-/* ===== Spielplan Hochformat: Ergebnis immer in EINER Zeile ===== */
-@media (orientation: portrait){
-  /* Tabelle breiter nutzbar und Spalten sinnvoll aufteilen */
-  #scheduleCard .table-scroll{ overflow-x:hidden !important; }
-  #scheduleCard table{ width:100% !important; min-width:0 !important; table-layout:fixed; }
-  #scheduleCard th:nth-child(1), #scheduleCard td:nth-child(1){ width:42px; }
-  #scheduleCard th:nth-child(3), #scheduleCard td:nth-child(3){ width:160px; }
-
-  /* Spielspalte darf umbrechen */
-  #scheduleCard td.match-col{ white-space:normal; }
-
-  /* Ergebniszelle: Flex + kein Umbruch */
-  #scheduleCard td:nth-child(3){
-    display:flex !important;
-    justify-content:center !important;
-    align-items:center !important;
-    gap:6px !important;
-    white-space:nowrap !important;
-  }
-
-  /* Inputs etwas kleiner, damit es sicher passt */
-  #scheduleCard .score-input{
-    width:52px !important;
-    padding:6px 6px !important;
-  }
+@media (max-width:380px){
+  .score-row-schedule .score-input{ width:58px; }
+  .team-box{ padding:9px 9px; }
 }
 
 </style>
@@ -645,15 +662,7 @@ td.match-col .kick{margin:0 6px 0 0}
     <div class="card" id="scheduleCard">
       <h2>Spielplan</h2>
       <div id="scheduleFilters" class="schedule-filters"><button type="button" class="chip active" data-filter="all">Alle</button><button type="button" class="chip" data-filter="open">Offen</button><button type="button" class="chip" data-filter="played">Gespielt</button></div>
-<div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th><th>Spiel</th><th>Ergebnis</th></tr>
-          </thead>
-          <tbody id="matchesBody"></tbody>
-        </table>
-      </div>
+<div id="matchesList"></div>
     </div>
 
     <div class="card" id="standingsCard">
@@ -1181,15 +1190,16 @@ function teamName(i){ return teamNames[i] || ("Team "+(i+1)); }
 function kickoffSide(m){ return String(m.round).startsWith("Hinrunde") ? "A" : "B"; }
 
 function renderMatches(){
-  const body=document.getElementById("matchesBody");
-  body.innerHTML="";
+  const list=document.getElementById("matchesList");
+  const body=document.getElementById("matchesBody"); // falls noch vorhanden (alte Version)
+  if(list){ list.innerHTML=""; }
+  if(body){ body.innerHTML=""; }
 
   const filter = window.scheduleFilter || "all";
 
-  // nach Runde gruppieren
   const byRound = new Map();
-  matches.forEach((mm)=>{ 
-    const r = mm.round ?? 1;
+  matches.forEach((mm)=>{
+    const r = mm.round ?? "Runde";
     if(!byRound.has(r)) byRound.set(r, []);
     byRound.get(r).push(mm);
   });
@@ -1202,68 +1212,84 @@ function renderMatches(){
 
   function parseRoundKey(r){
     const s = String(r);
-    const phase = s.startsWith("Hinrunde") ? 0 : 1; // Hinrunde vor Rückrunde
+    const phase = s.startsWith("Hinrunde") ? 0 : 1;
     const m = s.match(/(\d+)/);
     const no = m ? parseInt(m[1],10) : 0;
     return {phase, no};
   }
 
-  let rowIndex = 0;
+  let rowIndex=0;
 
   rounds.forEach((r)=>{
-    // Runde-Header row
-    const trR=document.createElement("tr");
-    trR.className="round-row";
-    const td=document.createElement("td");
-    td.colSpan=3;
-    td.innerHTML = `${escapeHtml(r)} <span class="badge-mini">${byRound.get(r).length}</span>`;
-    trR.appendChild(td);
-    body.appendChild(trR);
+    const arr = byRound.get(r) || [];
 
-    byRound.get(r).forEach((mm)=>{
+    if(list){
+      const roundDiv=document.createElement("div");
+      roundDiv.className="round-block";
+      roundDiv.innerHTML = `<span>${escapeHtml(r)}</span><span class="badge-mini">${arr.length}</span>`;
+      list.appendChild(roundDiv);
+    }
+
+    arr.forEach((mm)=>{
       const played = !!mm.played;
       if(filter==="played" && !played) return;
       if(filter==="open" && played) return;
 
+      rowIndex++;
       const kick=kickoffSide(mm);
       const Aname=teamName(mm.A), Bname=teamName(mm.B);
 
-      const tr=document.createElement("tr");
-      tr.className = played ? "played" : "unplayed";
+      if(list){
+        const card=document.createElement("div");
+        card.className="match-card" + (played ? " played" : "");
+        const statusText = played ? "GESPIELT" : "OFFEN";
 
-      // #
-      const td0=document.createElement("td");
-      td0.textContent = ++rowIndex;
-      tr.appendChild(td0);
+        const kickA = kick==="A";
+        const kickB = kick==="B";
 
-      // Spiel
-      const tdMatch=document.createElement("td");
-      tdMatch.className="match-col";
-      tdMatch.innerHTML = `${kick==="A" ? '<span class="kick">⚽</span>' : ''}${escapeHtml(Aname)} – ${kick==="B" ? '<span class="kick">⚽</span>' : ''}${escapeHtml(Bname)}`;
-      tr.appendChild(tdMatch);
+        card.innerHTML = `
+          <div class="match-head">
+            <div>#${rowIndex}</div>
+            <div class="match-status">${statusText}</div>
+          </div>
 
-      // Ergebnis inputs (A : B)
-      const tdRes=document.createElement("td");
-      const inA=document.createElement("input");
-      inA.type="number"; inA.inputMode="numeric";
-      inA.className="score-input";
-      inA.value=String(mm.gA ?? 0);
-      inA.addEventListener("input",(e)=>updateScore(mm.id,"A",e.target.value));
+          <div class="teams-row">
+            <div class="team-box">
+              <div class="team-name-line">
+                <span class="kick-mini ${kickA ? "" : "hidden"}">⚽</span>
+                <span title="${escapeHtml(Aname)}" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(Aname)}</span>
+              </div>
+              <div class="side-label">Links</div>
+            </div>
 
-      const sep=document.createElement("span");
-      sep.textContent=" : ";
-      sep.style.fontWeight="900";
+            <div class="vs-pill">vs</div>
 
-      const inB=document.createElement("input");
-      inB.type="number"; inB.inputMode="numeric";
-      inB.className="score-input";
-      inB.value=String(mm.gB ?? 0);
-      inB.addEventListener("input",(e)=>updateScore(mm.id,"B",e.target.value));
+            <div class="team-box">
+              <div class="team-name-line" style="justify-content:flex-end">
+                <span title="${escapeHtml(Bname)}" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(Bname)}</span>
+                <span class="kick-mini ${kickB ? "" : "hidden"}">⚽</span>
+              </div>
+              <div class="side-label" style="text-align:right">Rechts</div>
+            </div>
+          </div>
 
-      tdRes.appendChild(inA); tdRes.appendChild(sep); tdRes.appendChild(inB);
-      tr.appendChild(tdRes);
+          <div class="score-row-schedule">
+            <input class="score-input" type="number" inputmode="numeric" value="${String(mm.gA ?? 0)}" data-id="${mm.id}" data-side="A">
+            <span class="sep">:</span>
+            <input class="score-input" type="number" inputmode="numeric" value="${String(mm.gB ?? 0)}" data-id="${mm.id}" data-side="B">
+          </div>
+        `;
 
-      body.appendChild(tr);
+        card.querySelectorAll("input.score-input").forEach(inp=>{
+          inp.addEventListener("input",(e)=>{
+            const id=parseInt(e.target.dataset.id,10);
+            const side=e.target.dataset.side;
+            updateScore(id, side, e.target.value);
+          });
+        });
+
+        list.appendChild(card);
+      }
     });
   });
 }
