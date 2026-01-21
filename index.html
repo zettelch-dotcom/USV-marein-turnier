@@ -187,7 +187,6 @@ select{padding:7px 10px;border-radius:10px;border:1px solid #ddd;background:#fff
 
 /* Tables */
 .table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
-/* WICHTIG: min-width entfernt, damit im Hochformat kein Horizontal-Scroll erzwungen wird */
 table{width:100%;border-collapse:collapse;min-width:760px}
 th,td{padding:10px 8px;border-bottom:1px solid rgba(0,0,0,.08);text-align:center;font-size:.95rem}
 th{background:#eef3ff;font-weight:900}
@@ -310,55 +309,101 @@ th{background:#eef3ff;font-weight:900}
   .reset-btn{margin-left:0;width:100%}
   .team-grid{grid-template-columns:repeat(2, minmax(160px, 1fr))}
 }
-
-
-/* ===== Spielplan: Hochformat OHNE links/rechts Scroll (nur Spielplan) ===== */
 @media (max-width:520px){
-  /* Wichtig: nur Spielplan anpassen – Tabelle (Standings) bleibt original */
-  #scheduleCard table{ min-width:0 !important; }
-  #scheduleCard .table-scroll{ overflow-x:hidden !important; }
+  .field-row{flex-direction:column;align-items:stretch}
+  .field input[type="number"], .field select{width:100%}
 
-  /* Eine Zeile pro Spiel: # oben, Spiel, dann Ergebnis */
-  #scheduleCard tbody tr:not(.round-row){
-    display:grid;
-    grid-template-columns:1fr;
-    gap:6px;
-    padding:10px 12px;
-  }
-  #scheduleCard tbody tr:not(.round-row) td{
-    padding:0;
-    border-bottom:0;
-    text-align:center;
-    white-space:normal;
-  }
-  #scheduleCard tbody tr:not(.round-row) td:nth-child(1){
-    font-size:.8rem;
-    opacity:.6;
-  }
-  #scheduleCard tbody tr:not(.round-row) td:nth-child(2){
-    font-weight:900;
-    font-size:1rem;
-  }
-  #scheduleCard tbody tr:not(.round-row) td:nth-child(3){
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:6px;
-    padding-top:6px;
-  }
-  #scheduleCard .score-input{
-    width:52px;
-    padding:6px 6px;
-  }
+  .team-grid{grid-template-columns:1fr}
+  .header-center h1{font-size:1.35rem}
+  table{min-width:680px}
+  .timer-display{font-size:3.1rem;min-width:190px}
+  .score-big{width:86px}
+  .guided-vs{font-size:1.05rem}
+  .btn{padding:12px 14px}
+  .btn.big{min-width:148px; padding:16px 18px; font-size:1.12rem}
+}
+
+/* Guided-only: nur aktuelles Spiel */
+body.guided-only header,
+body.guided-only #settingsCard,
+body.guided-only #scheduleCard,
+body.guided-only #standingsCard{ display:none !important; }
+body.guided-only .container{ max-width:720px; margin:12px auto 18px; }
+.pill{font-size:12px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.22);color:#fff}
+
+/* Spielzeit gleiche Größe wie Auswahl Teams */
+#timerMinutes{
+  padding:7px 10px !important;
+  border-radius:10px !important;
+  border:1px solid #ddd !important;
+  background:#fff !important;
+  width:auto !important;
+}
+
+/* ===== Portrait Fix: Aktuelles Spiel (Teams + Spielstände nebeneinander) ===== */
+/* Teams (oben) immer in EINER Zeile, mit Ellipsis bei langen Namen */
+#guidedVs{
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:8px !important;
+  white-space:nowrap !important;
+}
+#guidedVs .team-cell{
+  flex:1 1 0 !important;
+  min-width:0 !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+#guidedVs .vs{
+  flex:0 0 auto !important;
+  opacity:.7 !important;
+  font-weight:900 !important;
+}
+
+/* Spielstände (unten) immer nebeneinander */
+#guidedCard .score-row{
+  flex-wrap:nowrap !important;
+  gap:10px !important;
+}
+#guidedCard .score-col{flex:0 0 auto !important;}
+
+@media (max-width:520px){
+  #guidedVs{gap:6px !important;}
+  #guidedCard .score-row{gap:8px !important;}
+  #guidedCard .score-big{width:78px !important;}
+  #guidedCard .plus-ball{font-size:1.7rem !important; padding:5px 7px !important;}
 }
 
 
-/* ===== Sicherung: Tabelle (Standings) immer als echte Tabelle rendern ===== */
-#standingsCard table{ display:table; width:100%; border-collapse:collapse; }
-#standingsCard thead{ display:table-header-group; }
-#standingsCard tbody{ display:table-row-group; }
-#standingsCard tr{ display:table-row; }
-#standingsCard th, #standingsCard td{ display:table-cell; }
+/* Spielplan: Filter + Runden-Gruppierung */
+.schedule-filters{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px}
+.schedule-filters .chip{
+  border:1px solid rgba(0,0,0,.12);
+  background:transparent;
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:700;
+  cursor:pointer;
+}
+.schedule-filters .chip.active{
+  background:rgba(0,0,0,.06);
+}
+tr.round-row td{
+  font-weight:900;
+  background:rgba(0,0,0,.04);
+  border-top:2px solid rgba(0,0,0,.06);
+}
+.badge-mini{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:2px 10px;border-radius:999px;background:rgba(0,0,0,.06);
+  font-weight:900;
+  min-width:46px;
+}
+td.match-col{font-weight:700;}
+td.match-col .kick{margin:0 6px 0 0}
 
 </style>
 </head>
@@ -724,12 +769,17 @@ async function requestWakeLock(){
   try{
     if(!("wakeLock" in navigator)) return;
     wakeLock = await navigator.wakeLock.request("screen");
-    wakeLock.addEventListener("release", ()=>{ wakeLock=null; });
+    if(pill){ pill.style.display="inline-block"; }
+    wakeLock.addEventListener("release", ()=>{
+      if(pill2){ pill2.style.display="none"; }
+      wakeLock=null;
+    });
   }catch(e){}
 }
 async function releaseWakeLock(){
   try{ if(wakeLock){ await wakeLock.release(); } }catch(e){}
   wakeLock=null;
+  if(pill){ pill.style.display="none"; }
 }
 
 document.addEventListener("visibilitychange", ()=>{
@@ -1003,20 +1053,7 @@ function renderMatches(){
     byRound.get(r).push(mm);
   });
 
-  // Sortierung: Hinrunde 1..n, dann Rückrunde 1..n
-  const rounds = Array.from(byRound.keys()).sort((a,b)=>{
-    const pa = parseRoundKey(a);
-    const pb = parseRoundKey(b);
-    return (pa.phase - pb.phase) || (pa.no - pb.no);
-  });
-
-  function parseRoundKey(r){
-    const s = String(r);
-    const phase = s.startsWith("Hinrunde") ? 0 : 1;
-    const m = s.match(/(\d+)/);
-    const no = m ? parseInt(m[1],10) : 0;
-    return {phase, no};
-  }
+  const rounds = Array.from(byRound.keys()).sort((a,b)=>a-b);
 
   let rowIndex = 0;
 
@@ -1026,7 +1063,7 @@ function renderMatches(){
     trR.className="round-row";
     const td=document.createElement("td");
     td.colSpan=3;
-    td.innerHTML = `${escapeHtml(r)} <span class="badge-mini">${byRound.get(r).length}</span>`;
+    td.innerHTML = `Runde ${r} <span class="badge-mini">${byRound.get(r).length}</span>`;
     trR.appendChild(td);
     body.appendChild(trR);
 
@@ -1240,4 +1277,3 @@ document.addEventListener('DOMContentLoaded', ()=>{
 </script>
 </body>
 </html>
-
