@@ -405,6 +405,16 @@ tr.round-row td{
 td.match-col{font-weight:700;}
 td.match-col .kick{margin:0 6px 0 0}
 
+
+/* Vorschau (Guided): grau hinterlegt */
+#nextPreviewWrap{ background:#eef1f4 !important; }
+
+
+/* Spielplan: gleiche Breite wie Einstellungen (Card voll ausnutzen) */
+#scheduleCard{ width:100%; }
+#scheduleCard .table-scroll{ width:100%; }
+#scheduleCard table{ width:100%; min-width:0; table-layout:auto; }
+
 </style>
 </head>
 
@@ -503,6 +513,14 @@ td.match-col .kick{margin:0 6px 0 0}
           <span class="plus-ball" id="ballB" title="+1 Tor">⚽</span>
         </div>
       </div>
+
+
+      <div id="nextPreviewWrap" style="margin:14px auto 0;max-width:520px;padding:14px;border-radius:14px;background:#eef1f4;border:1px solid rgba(0,0,0,.08);text-align:center">
+        <div style="font-weight:900;margin-bottom:6px">Nächstes Spiel</div>
+        <div id="guidedNextMeta" style="color:var(--muted);font-weight:700;font-size:.95rem;margin-bottom:8px"></div>
+        <div id="guidedNextVs" class="guided-vs" style="margin:0"></div>
+      </div>
+
 
       <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px">
         <button class="btn light" id="prevBtn" type="button">◀ Vorheriges</button>
@@ -769,17 +787,12 @@ async function requestWakeLock(){
   try{
     if(!("wakeLock" in navigator)) return;
     wakeLock = await navigator.wakeLock.request("screen");
-    if(pill){ pill.style.display="inline-block"; }
-    wakeLock.addEventListener("release", ()=>{
-      if(pill2){ pill2.style.display="none"; }
-      wakeLock=null;
-    });
+    wakeLock.addEventListener("release", ()=>{ wakeLock=null; });
   }catch(e){}
 }
 async function releaseWakeLock(){
   try{ if(wakeLock){ await wakeLock.release(); } }catch(e){}
   wakeLock=null;
-  if(pill){ pill.style.display="none"; }
 }
 
 document.addEventListener("visibilitychange", ()=>{
@@ -1032,9 +1045,27 @@ function buildMatchesBerger(loaded){
 }
 
 function applyModeUI(){
-  document.getElementById("guidedCard").style.display = guidedMode ? "block" : "none";
-  document.getElementById("scheduleCard").style.display = guidedMode ? "none" : "block";
+  const guidedCard = document.getElementById("guidedCard");
+  const scheduleCard = document.getElementById("scheduleCard");
+  const standingsCard = document.getElementById("standingsCard");
+  const settingsCard = document.getElementById("settingsCard");
+  const headerEl = document.querySelector("header");
+
   document.body.classList.toggle("guided-only", guidedMode);
+
+  if(guidedMode){
+    if(headerEl) headerEl.style.display="none";
+    if(settingsCard) settingsCard.style.display="none";
+    if(scheduleCard) scheduleCard.style.display="none";
+    if(standingsCard) standingsCard.style.display="none";
+    if(guidedCard) guidedCard.style.display="block";
+  }else{
+    if(headerEl) headerEl.style.display="";
+    if(settingsCard) settingsCard.style.display="";
+    if(scheduleCard) scheduleCard.style.display="block";
+    if(standingsCard) standingsCard.style.display="block";
+    if(guidedCard) guidedCard.style.display="none";
+  }
 }
 function teamName(i){ return teamNames[i] || ("Team "+(i+1)); }
 function kickoffSide(m){ return String(m.round).startsWith("Hinrunde") ? "A" : "B"; }
@@ -1053,7 +1084,19 @@ function renderMatches(){
     byRound.get(r).push(mm);
   });
 
-  const rounds = Array.from(byRound.keys()).sort((a,b)=>a-b);
+  const rounds = Array.from(byRound.keys()).sort((a,b)=>{
+    const pa = parseRoundKey(a);
+    const pb = parseRoundKey(b);
+    return (pa.phase - pb.phase) || (pa.no - pb.no);
+  });
+
+  function parseRoundKey(r){
+    const s = String(r);
+    const phase = s.startsWith("Hinrunde") ? 0 : 1; // Hinrunde vor Rückrunde
+    const m = s.match(/(\d+)/);
+    const no = m ? parseInt(m[1],10) : 0;
+    return {phase, no};
+  }
 
   let rowIndex = 0;
 
@@ -1063,7 +1106,7 @@ function renderMatches(){
     trR.className="round-row";
     const td=document.createElement("td");
     td.colSpan=3;
-    td.innerHTML = `Runde ${r} <span class="badge-mini">${byRound.get(r).length}</span>`;
+    td.innerHTML = `${escapeHtml(r)} <span class="badge-mini">${byRound.get(r).length}</span>`;
     trR.appendChild(td);
     body.appendChild(trR);
 
@@ -1153,6 +1196,36 @@ function renderGuidedMatch(){
 
   document.getElementById("guidedScoreA").value = String(m.gA ?? 0);
   document.getElementById("guidedScoreB").value = String(m.gB ?? 0);
+
+
+  // Vorschau: nächstes Spiel (unter Toreingabe)
+  const nextWrap = document.getElementById("nextPreviewWrap");
+  const nextMeta = document.getElementById("guidedNextMeta");
+  const nextVs = document.getElementById("guidedNextVs");
+
+  if(nextWrap && nextMeta && nextVs){
+    const next = matches[currentMatchIndex+1] || null;
+    if(next){
+      const nkick = kickoffSide(next);
+      const nA = teamName(next.A), nB = teamName(next.B);
+
+      nextMeta.textContent = `Spiel ${currentMatchIndex+2} von ${matches.length} • ${next.round}`;
+
+      const nAhtml = (nkick==="A")
+        ? `<span class="team-cell left"><span class="kick">⚽</span><span class="team-name">${escapeHtml(nA)}</span></span>`
+        : `<span class="team-cell left"><span class="team-name">${escapeHtml(nA)}</span></span>`;
+      const nBhtml = (nkick==="B")
+        ? `<span class="team-cell right"><span class="kick">⚽</span><span class="team-name">${escapeHtml(nB)}</span></span>`
+        : `<span class="team-cell right"><span class="team-name">${escapeHtml(nB)}</span></span>`;
+
+      nextVs.innerHTML = `${nAhtml} <span class="vs-mid">vs</span> ${nBhtml}`;
+      nextWrap.style.display = "block";
+    }else{
+      nextMeta.textContent = "Kein weiteres Spiel – letztes Spiel.";
+      nextVs.innerHTML = "";
+      nextWrap.style.display = "block";
+    }
+  }
 
   document.getElementById("prevBtn").disabled = (currentMatchIndex===0);
   document.getElementById("nextBtn").disabled = (currentMatchIndex===matches.length-1);
