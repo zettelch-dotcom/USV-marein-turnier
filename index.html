@@ -691,6 +691,21 @@ td.match-col .kick{margin:0 6px 0 0}
   max-width:38%;
 }
 
+
+/* === Mobile Fix: Teamnamen sichtbar halten === */
+@media (max-width:520px){
+  .team-box{
+    max-width:44% !important;
+    padding:8px 10px !important;
+  }
+  .team-box span{
+    font-size:0.95rem !important;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+}
+
 </style>
 </head>
 
