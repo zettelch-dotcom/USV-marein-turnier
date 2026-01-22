@@ -728,6 +728,22 @@ td.match-col .kick{margin:0 6px 0 0}
   line-height:1.15;
 }
 
+
+/* ============================
+   LÖSUNG 1 – 2 ZEILEN IM HOCHFORMAT (SPIELPLAN)
+   ============================ */
+@media (max-width: 520px){
+  .match-card .team-name-line span{
+    display:-webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    overflow:hidden !important;
+    white-space:normal !important;
+    line-height:1.15 !important;
+    text-overflow:clip !important;
+  }
+}
+
 </style>
 </head>
 
