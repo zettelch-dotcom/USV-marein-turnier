@@ -691,6 +691,43 @@ td.match-col .kick{margin:0 6px 0 0}
   max-width:38%;
 }
 
+
+/* ============================
+   FINAL FIX – TEAMNAMEN 2 ZEILEN
+   ============================ */
+#guidedVs,
+#guidedNextVs{
+  display:grid !important;
+  grid-template-columns:1fr auto 1fr !important;
+  align-items:center !important;
+  gap:8px !important;
+  width:100% !important;
+}
+
+#guidedVs .team-cell,
+#guidedNextVs .team-cell{
+  min-width:0 !important;
+}
+
+#guidedVs .team-name,
+#guidedNextVs .team-name{
+  display:-webkit-box !important;
+  -webkit-box-orient:vertical !important;
+  -webkit-line-clamp:2 !important;
+  overflow:hidden !important;
+  white-space:normal !important;
+  line-height:1.15;
+}
+
+.match-card .team-name-line span{
+  display:-webkit-box !important;
+  -webkit-box-orient:vertical !important;
+  -webkit-line-clamp:2 !important;
+  overflow:hidden !important;
+  white-space:normal !important;
+  line-height:1.15;
+}
+
 </style>
 </head>
 
