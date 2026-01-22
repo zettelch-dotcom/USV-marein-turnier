@@ -359,7 +359,7 @@ tr.round-row td{
   background:rgba(0,0,0,.04);
   border-top:2px solid rgba(0,0,0,.06);
 }
-.badge-mini{
+/* .badge-mini{
   display:inline-flex;align-items:center;justify-content:center;
   padding:2px 10px;border-radius:999px;background:rgba(0,0,0,.06);
   font-weight:900;
@@ -392,7 +392,7 @@ td.match-col .kick{margin:0 6px 0 0}
   justify-content:space-between;
   gap:10px;
 }
-.round-block .badge-mini{ background:rgba(0,0,0,.06); }
+.round-block /* .badge-mini{ background:rgba(0,0,0,.06); }
 
 .match-card{
   background: rgba(255,255,255,.96);
@@ -583,7 +583,7 @@ td.match-col .kick{margin:0 6px 0 0}
   padding:2px 4px !important;
   font-size:0.82rem;
 }
-#scheduleCard .badge-mini{
+#scheduleCard /* .badge-mini{
   padding:1px 8px;
   font-size:0.75rem;
 }
@@ -1397,6 +1397,36 @@ function assignKickoffsFairHinrunde(){
   }
 }
 
+function assignDisplaySidesFair(){
+  // Ziel: jedes Team soll über das ganze Turnier gleich oft links/rechts angezeigt werden.
+  // Bei Hin- & Rückrunde spielt jedes Team 2*(teamCount-1) Spiele -> Ziel links = (teamCount-1)
+  const targetLeft = (teamCount - 1);
+  const leftCount = Array.from({length: teamCount}, ()=>0);
+
+  for(const mm of matches){
+    const needA = targetLeft - leftCount[mm.A];
+    const needB = targetLeft - leftCount[mm.B];
+
+    let swap = false; // false: A links, true: B links
+
+    if(needA <= 0 && needB <= 0){
+      swap = (mm.id % 2 === 0);
+    }else if(needA <= 0){
+      swap = true;
+    }else if(needB <= 0){
+      swap = false;
+    }else{
+      swap = (needB > needA);
+      if(needA === needB) swap = (mm.id % 2 === 0);
+    }
+
+    mm.swapDisplay = swap;
+    const leftIdx = swap ? mm.B : mm.A;
+    leftCount[leftIdx]++;
+  }
+}
+
+
 
 function buildMatchesBerger(loaded){
   matches=[];
@@ -1447,6 +1477,7 @@ function buildMatchesBerger(loaded){
   currentMatchIndex=Math.max(0, Math.min(currentMatchIndex, matches.length-1));
 
   assignKickoffsFairHinrunde();
+  assignDisplaySidesFair();
 }
 
 function applyModeUI(){
@@ -1517,7 +1548,7 @@ function renderMatches(){
     if(list){
       const roundDiv=document.createElement("div");
       roundDiv.className="round-block";
-      roundDiv.innerHTML = `<span>${escapeHtml(r)}</span><span class="badge-mini">${arr.length}</span>`;
+      roundDiv.innerHTML = `<span>${escapeHtml(r)}</span>`;
       list.appendChild(roundDiv);
     }
 
@@ -1535,8 +1566,26 @@ function renderMatches(){
         card.className="match-card" + (played ? " played" : "");
         const statusText = played ? "GESPIELT" : "OFFEN";
 
-        const kickA = kick==="A";
-        const kickB = kick==="B";
+        
+        // Anzeige: links/rechts pro Team exakt ausgleichen
+        const swap = !!mm.swapDisplay;
+
+        const leftIdx  = swap ? mm.B : mm.A;
+        const rightIdx = swap ? mm.A : mm.B;
+
+        const leftSide  = (leftIdx === mm.A) ? "A" : "B";
+        const rightSide = (rightIdx === mm.A) ? "A" : "B";
+
+        const leftName  = teamName(leftIdx);
+        const rightName = teamName(rightIdx);
+
+        const leftScore  = (leftSide === "A") ? mm.gA : mm.gB;
+        const rightScore = (rightSide === "A") ? mm.gA : mm.gB;
+
+        // Kickoff-Icon bleibt beim richtigen Team
+        const kickTeamIdx = (kick === "A") ? mm.A : mm.B;
+        const leftKick  = (leftIdx === kickTeamIdx);
+        const rightKick = (rightIdx === kickTeamIdx);
 
         card.innerHTML = `
           <div class="match-head">
@@ -1547,27 +1596,28 @@ function renderMatches(){
           <div class="teams-row">
             <div class="team-box">
               <div class="team-name-line">
-                <span class="kick-mini ${kickA ? "" : "hidden"}">⚽</span>
-                <span title="${escapeHtml(Aname)}" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(Aname)}</span>
+                <span class="kick-mini ${leftKick ? "" : "hidden"}">⚽</span>
+                <span title="${escapeHtml(leftName)}" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(leftName)}</span>
               </div>
             </div>
 
-            <input class="score-input score-mini" type="number" inputmode="numeric" value="${String(mm.gA ?? 0)}" data-id="${mm.id}" data-side="A">
+            <input class="score-input score-mini" type="number" inputmode="numeric"
+              value="${String(leftScore ?? 0)}" data-id="${mm.id}" data-side="${leftSide}">
 
             <div class="vs-pill">vs</div>
 
-            <input class="score-input score-mini" type="number" inputmode="numeric" value="${String(mm.gB ?? 0)}" data-id="${mm.id}" data-side="B">
+            <input class="score-input score-mini" type="number" inputmode="numeric"
+              value="${String(rightScore ?? 0)}" data-id="${mm.id}" data-side="${rightSide}">
 
             <div class="team-box">
               <div class="team-name-line" style="justify-content:flex-end">
-                <span title="${escapeHtml(Bname)}" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(Bname)}</span>
-                <span class="kick-mini ${kickB ? "" : "hidden"}">⚽</span>
+                <span title="${escapeHtml(rightName)}" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(rightName)}</span>
+                <span class="kick-mini ${rightKick ? "" : "hidden"}">⚽</span>
               </div>
             </div>
           </div>
         `;
-
-        card.querySelectorAll("input.score-input").forEach(inp=>{
+card.querySelectorAll("input.score-input").forEach(inp=>{
           inp.addEventListener("input",(e)=>{
             const id=parseInt(e.target.dataset.id,10);
             const side=e.target.dataset.side;
@@ -1606,16 +1656,32 @@ function renderGuidedMatch(){
   document.getElementById("guidedMeta").textContent =
     `Spiel ${currentMatchIndex+1} von ${matches.length} • ${m.round}`;
 
-  const Aname=teamName(m.A), Bname=teamName(m.B);
-  const Ahtml = (kick==="A")
-    ? `<span class="team-cell left"><span class="kick">⚽</span><span class="team-name">${escapeHtml(Aname)}</span></span>`
-    : `<span class="team-cell left"><span class="team-name">${escapeHtml(Aname)}</span></span>`;
-  const Bhtml = (kick==="B")
-    ? `<span class="team-cell right"><span class="kick">⚽</span><span class="team-name">${escapeHtml(Bname)}</span></span>`
-    : `<span class="team-cell right"><span class="team-name">${escapeHtml(Bname)}</span></span>`;
+  
+  // Anzeige: links/rechts pro Team exakt ausgleichen
+  const swap = !!m.swapDisplay;
+
+  const leftIdx  = swap ? m.B : m.A;
+  const rightIdx = swap ? m.A : m.B;
+
+  const kickSide = kickoffSide(m);
+  const kickTeamIdx = (kickSide === "A") ? m.A : m.B;
+
+  const leftKick  = (leftIdx === kickTeamIdx);
+  const rightKick = (rightIdx === kickTeamIdx);
+
+  const leftName  = teamName(leftIdx);
+  const rightName = teamName(rightIdx);
+
+  const Ahtml = (leftKick)
+    ? `<span class="team-cell left"><span class="kick">⚽</span><span class="team-name">${escapeHtml(leftName)}</span></span>`
+    : `<span class="team-cell left"><span class="team-name">${escapeHtml(leftName)}</span></span>`;
+  const Bhtml = (rightKick)
+    ? `<span class="team-cell right"><span class="kick">⚽</span><span class="team-name">${escapeHtml(rightName)}</span></span>`
+    : `<span class="team-cell right"><span class="team-name">${escapeHtml(rightName)}</span></span>`;
 
   document.getElementById("guidedVs").innerHTML =
     `${Ahtml} <span class="vs-mid">vs</span> ${Bhtml}`;
+
 
   document.getElementById("guidedScoreA").value = String(m.gA ?? 0);
   document.getElementById("guidedScoreB").value = String(m.gB ?? 0);
@@ -1629,19 +1695,31 @@ function renderGuidedMatch(){
   if(nextWrap && nextMeta && nextVs){
     const next = matches[currentMatchIndex+1] || null;
     if(next){
-      const nkick = kickoffSide(next);
-      const nA = teamName(next.A), nB = teamName(next.B);
+      
+      // Anzeige: links/rechts pro Team exakt ausgleichen
+      const nswap = !!next.swapDisplay;
 
-      nextMeta.textContent = `Spiel ${currentMatchIndex+2} von ${matches.length} • ${next.round}`;
+      const nLeftIdx  = nswap ? next.B : next.A;
+      const nRightIdx = nswap ? next.A : next.B;
 
-      const nAhtml = (nkick==="A")
-        ? `<span class="team-cell left"><span class="kick">⚽</span><span class="team-name">${escapeHtml(nA)}</span></span>`
-        : `<span class="team-cell left"><span class="team-name">${escapeHtml(nA)}</span></span>`;
-      const nBhtml = (nkick==="B")
-        ? `<span class="team-cell right"><span class="kick">⚽</span><span class="team-name">${escapeHtml(nB)}</span></span>`
-        : `<span class="team-cell right"><span class="team-name">${escapeHtml(nB)}</span></span>`;
+      const nkickSide = kickoffSide(next);
+      const nkickTeamIdx = (nkickSide === "A") ? next.A : next.B;
+
+      const nLeftKick  = (nLeftIdx === nkickTeamIdx);
+      const nRightKick = (nRightIdx === nkickTeamIdx);
+
+      const nLeftName  = teamName(nLeftIdx);
+      const nRightName = teamName(nRightIdx);
+
+      const nAhtml = (nLeftKick)
+        ? `<span class="team-cell left"><span class="kick">⚽</span><span class="team-name">${escapeHtml(nLeftName)}</span></span>`
+        : `<span class="team-cell left"><span class="team-name">${escapeHtml(nLeftName)}</span></span>`;
+      const nBhtml = (nRightKick)
+        ? `<span class="team-cell right"><span class="kick">⚽</span><span class="team-name">${escapeHtml(nRightName)}</span></span>`
+        : `<span class="team-cell right"><span class="team-name">${escapeHtml(nRightName)}</span></span>`;
 
       nextVs.innerHTML = `${nAhtml} <span class="vs-mid">vs</span> ${nBhtml}`;
+
       nextWrap.style.display = "block";
     }else{
       nextMeta.textContent = "Kein weiteres Spiel – letztes Spiel.";
