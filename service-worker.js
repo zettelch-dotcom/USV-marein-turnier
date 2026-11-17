@@ -1,5 +1,5 @@
 /* USV St. Marein – Offline-Cache. Version bei Aktualisierung erhöhen. */
-const CACHE = 'usv-st-marein-turnier-offline-v5';
+const CACHE = 'usv-st-marein-turnier-offline-v6';
 const FILES = ['./', './index.html', './logo.png', './foto1.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)).then(() => self.skipWaiting()));
