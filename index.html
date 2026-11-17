@@ -273,8 +273,10 @@ th{background:#eef3ff;font-weight:900}
   .team-grid{grid-template-columns:repeat(2, minmax(160px, 1fr))}
 }
 @media (max-width:520px){
-  .field-row{flex-direction:column;align-items:stretch}
-  .field input[type="number"], .field select{width:100%}
+  .field-row{flex-direction:row;align-items:flex-end;flex-wrap:nowrap;gap:10px}
+  .field-row .field{flex:1 1 0;min-width:0;flex-direction:column;align-items:stretch;gap:5px}
+  .field-row .field label{font-size:.85rem;white-space:normal}
+  .field-row .field select{width:100%;min-width:0}
 
   .team-grid{grid-template-columns:1fr}
   .header-center h1{font-size:1.35rem}
@@ -359,7 +361,7 @@ tr.round-row td{
   background:rgba(0,0,0,.04);
   border-top:2px solid rgba(0,0,0,.06);
 }
-/* .badge-mini{
+ .badge-mini{
   display:inline-flex;align-items:center;justify-content:center;
   padding:2px 10px;border-radius:999px;background:rgba(0,0,0,.06);
   font-weight:900;
@@ -392,7 +394,7 @@ td.match-col .kick{margin:0 6px 0 0}
   justify-content:space-between;
   gap:10px;
 }
-.round-block /* .badge-mini{ background:rgba(0,0,0,.06); }
+.round-block  .badge-mini{ background:rgba(0,0,0,.06); }
 
 .match-card{
   background: rgba(255,255,255,.96);
@@ -506,6 +508,7 @@ td.match-col .kick{margin:0 6px 0 0}
 }
 
 
+.match-card.live .match-status{background:rgba(250,204,21,.22);color:#854d0e;}
 /* === KOMPAKTER SPIELPLAN (Hochformat optimiert) === */
 #scheduleCard table th,
 #scheduleCard table td{
@@ -583,7 +586,7 @@ td.match-col .kick{margin:0 6px 0 0}
   padding:2px 4px !important;
   font-size:0.82rem;
 }
-#scheduleCard /* .badge-mini{
+#scheduleCard  .badge-mini{
   padding:1px 8px;
   font-size:0.75rem;
 }
@@ -775,12 +778,12 @@ td.match-col .kick{margin:0 6px 0 0}
   .match-card .teams-row .vs-pill{ grid-column:2; grid-row:1; }
   .match-card .teams-row .team-box:last-of-type{ grid-column:3; grid-row:1; }
 
-  .match-card .teams-row input.score-input[data-side="A"]{ grid-column:1; grid-row:2; justify-self:end; }
-  .match-card .teams-row input.score-input[data-side="B"]{ grid-column:3; grid-row:2; justify-self:start; }
+  .match-card .teams-row .score-readonly[data-side="A"]{ grid-column:1; grid-row:2; justify-self:end; }
+  .match-card .teams-row .score-readonly[data-side="B"]{ grid-column:3; grid-row:2; justify-self:start; }
 
   /* make scores centered area show ":" between (uses vs-pill already on row1, so add visual separator via pseudo) */
-  .match-card .teams-row input.score-input[data-side="A"]{ margin-right:6px; }
-  .match-card .teams-row input.score-input[data-side="B"]{ margin-left:6px; }
+  .match-card .teams-row .score-readonly[data-side="A"]{ margin-right:6px; }
+  .match-card .teams-row .score-readonly[data-side="B"]{ margin-left:6px; }
   .match-card .teams-row::after{
     content: ":";
     grid-column:2;
@@ -794,7 +797,7 @@ td.match-col .kick{margin:0 6px 0 0}
   }
 
   /* scores a bit larger, and names can use 2 lines */
-  .match-card input.score-input.score-mini{
+  .match-card .score-readonly.score-mini{
     width:56px !important;
     height:40px !important;
     font-size:1.35rem !important;
@@ -810,6 +813,18 @@ td.match-col .kick{margin:0 6px 0 0}
   }
 }
 
+/* Einstellungen: beide Dropdowns im Hochformat sichtbar */
+#settingsCard .field-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:nowrap}
+#settingsCard .field-row>.field{min-width:0;flex:1 1 0;display:flex;flex-direction:column;align-items:stretch;gap:6px}
+#settingsCard .field-row>.field label{font-size:.92rem;line-height:1.2}
+#settingsCard #teamCount,#settingsCard #timerMinutes{display:block;width:100% !important;min-width:0 !important;max-width:100%;height:42px;padding:8px 6px !important;font-size:1rem}
+@media(max-width:380px){#settingsCard .field-row{gap:8px}#settingsCard .field-row>.field label{font-size:.8rem}}
+/* Status im Spielplan kann direkt umgeschaltet werden */
+.match-status-toggle{cursor:pointer;font:inherit;}
+.match-status-toggle:focus-visible{outline:3px solid #2f6ed1;outline-offset:3px;}
+/* Ergebnisfelder im Spielplan sind bewusst nicht bearbeitbar. */
+#matchesList .score-readonly{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;background:#fff;cursor:default;user-select:text;}
+#matchesList .match-status{display:inline-flex;align-items:center;justify-content:center;cursor:default;}
 </style>
 </head>
 
@@ -845,7 +860,7 @@ td.match-col .kick{margin:0 6px 0 0}
         <div class="field-stack">
           <div class="field-row">
             <div class="field">
-              <label for="teamCount">Anzahl Teams</label>
+              <label for="teamCount">Anzahl Mannschaften</label>
               <select id="teamCount">
             <option value="3">3 Teams</option>
             <option value="4" selected>4 Teams</option>
@@ -855,7 +870,7 @@ td.match-col .kick{margin:0 6px 0 0}
             </div>
 <div class="field">
               <label for="timerMinutes">Spielzeit (Min)</label>
-              <input id="timerMinutes" class="select-like" type="number" min="1" step="1" value="10" style="width:110px;text-align:center" />
+              <select id="timerMinutes" class="select-like" aria-label="Spielzeit in Minuten"><option value="1">1 Min.</option><option value="2">2 Min.</option><option value="3">3 Min.</option><option value="4">4 Min.</option><option value="5">5 Min.</option><option value="6">6 Min.</option><option value="7">7 Min.</option><option value="8">8 Min.</option><option value="9">9 Min.</option><option value="10" selected>10 Min.</option><option value="12">12 Min.</option><option value="15">15 Min.</option><option value="18">18 Min.</option><option value="20">20 Min.</option><option value="25">25 Min.</option><option value="30">30 Min.</option><option value="35">35 Min.</option><option value="40">40 Min.</option><option value="45">45 Min.</option><option value="60">60 Min.</option></select>
             </div>
           </div>
 
@@ -1095,10 +1110,11 @@ function applyElapsed(){
   }
 
   if(remaining === 0){
+    const finishedMatchId = runningMatchId;
     stopTimer(true);
 
-    const mm = matches.find(x=>x.id===runningMatchId);
-    if(mm){ mm.played=true; }
+    const mm = matches.find(x=>x.id===finishedMatchId);
+    if(mm){ mm.played=true; mm.liveStarted=false; }
     updateTable();
     saveState();
 
@@ -1136,6 +1152,9 @@ function startTimer(){
 
   timerRunning=true;
   runningMatchId=m.id;
+  m.liveStarted=true;
+  updateTable();
+  renderMatches();
 
   timerEndAtById[m.id] = Date.now() + (timerRemainingById[m.id] * 1000);
 
@@ -1193,7 +1212,7 @@ function saveState(){
       warnedById,
       matches: matches.map(m=>({
         id:m.id,A:m.A,B:m.B,round:m.round,
-        gA:m.gA,gB:m.gB,played:!!m.played
+        gA:m.gA,gB:m.gB,played:!!m.played,liveStarted:!!m.liveStarted
       }))
     }));
   }catch(e){}
@@ -1232,6 +1251,9 @@ document.addEventListener("DOMContentLoaded",()=>{
   guidedMode=false;
   toggle.checked=false;
 
+  if(!Array.from(timerMinEl.options).some(o=>Number(o.value)===timerDefaultMinutes)){
+    const custom=document.createElement("option");custom.value=String(timerDefaultMinutes);custom.textContent=timerDefaultMinutes+" Min.";timerMinEl.appendChild(custom);
+  }
   timerMinEl.value=String(timerDefaultMinutes);
 
   sel.addEventListener("change", ()=>{
@@ -1313,7 +1335,7 @@ document.getElementById("guidedScoreA").addEventListener("input",(e)=>setGuidedS
 
     const oldSec = oldDefault * 60;
     const newSec = timerDefaultMinutes * 60;
-    const runningId = (timerRunning && curMatch()) ? curMatch().id : null;
+    const runningId = timerRunning ? runningMatchId : null;
 
     for(const mm of matches){
       if(!mm) continue;
@@ -1453,12 +1475,12 @@ function buildMatchesBerger(loaded){
   let id=1;
   for(let r=0;r<rounds;r++){
     roundsArr[r].forEach(p=>{
-      matches.push({id:id++,A:p.A,B:p.B,round:"Hinrunde "+(r+1),gA:0,gB:0,played:false});
+      matches.push({id:id++,A:p.A,B:p.B,round:"Hinrunde "+(r+1),gA:0,gB:0,played:false,liveStarted:false});
     });
   }
   for(let r=0;r<rounds;r++){
     roundsArr[r].forEach(p=>{
-      matches.push({id:id++,A:p.B,B:p.A,round:"Rückrunde "+(r+1),gA:0,gB:0,played:false});
+      matches.push({id:id++,A:p.B,B:p.A,round:"Rückrunde "+(r+1),gA:0,gB:0,played:false,liveStarted:false});
     });
   }
 
@@ -1470,6 +1492,7 @@ function buildMatchesBerger(loaded){
         m.gA=Number.isFinite(s.gA)?s.gA:0;
         m.gB=Number.isFinite(s.gB)?s.gB:0;
         m.played=!!s.played;
+        m.liveStarted=!!s.liveStarted;
       }
     });
   }
@@ -1545,7 +1568,7 @@ function renderMatches(){
   rounds.forEach((r)=>{
     const arr = byRound.get(r) || [];
 
-    if(list){
+    if(list && arr.some(mm => filter === "all" || (filter === "played" ? !!mm.played : !mm.played))){
       const roundDiv=document.createElement("div");
       roundDiv.className="round-block";
       roundDiv.innerHTML = `<span>${escapeHtml(r)}</span>`;
@@ -1563,8 +1586,8 @@ function renderMatches(){
 
       if(list){
         const card=document.createElement("div");
-        card.className="match-card" + (played ? " played" : "");
-        const statusText = played ? "GESPIELT" : "OFFEN";
+        card.className="match-card" + (played ? " played" : (mm.liveStarted ? " live" : ""));
+        const statusText = played ? "GESPIELT" : (mm.liveStarted ? "LIVE" : "OFFEN");
 
         
         // Anzeige: links/rechts pro Team exakt ausgleichen
@@ -1590,7 +1613,7 @@ function renderMatches(){
         card.innerHTML = `
           <div class="match-head">
             <div>#${rowIndex}</div>
-            <div class="match-status">${statusText}</div>
+            <span class="match-status">${statusText}</span>
           </div>
 
           <div class="teams-row">
@@ -1601,13 +1624,11 @@ function renderMatches(){
               </div>
             </div>
 
-            <input class="score-input score-mini" type="number" inputmode="numeric"
-              value="${String(leftScore ?? 0)}" data-id="${mm.id}" data-side="${leftSide}">
+            <span class="score-input score-mini score-readonly" data-side="A">${String(leftScore ?? 0)}</span>
 
             <div class="vs-pill">vs</div>
 
-            <input class="score-input score-mini" type="number" inputmode="numeric"
-              value="${String(rightScore ?? 0)}" data-id="${mm.id}" data-side="${rightSide}">
+            <span class="score-input score-mini score-readonly" data-side="B">${String(rightScore ?? 0)}</span>
 
             <div class="team-box">
               <div class="team-name-line" style="justify-content:flex-end">
@@ -1617,13 +1638,7 @@ function renderMatches(){
             </div>
           </div>
         `;
-card.querySelectorAll("input.score-input").forEach(inp=>{
-          inp.addEventListener("input",(e)=>{
-            const id=parseInt(e.target.dataset.id,10);
-            const side=e.target.dataset.side;
-            updateScore(id, side, e.target.value);
-          });
-        });
+// Spielplan ist reine Anzeige: Tore und Status nur im Turniermodus ändern.
 
         list.appendChild(card);
       }
@@ -1683,8 +1698,8 @@ function renderGuidedMatch(){
     `${Ahtml} <span class="vs-mid">vs</span> ${Bhtml}`;
 
 
-  document.getElementById("guidedScoreA").value = String(m.gA ?? 0);
-  document.getElementById("guidedScoreB").value = String(m.gB ?? 0);
+  document.getElementById("guidedScoreA").value = String(swap ? m.gB : m.gA);
+  document.getElementById("guidedScoreB").value = String(swap ? m.gA : m.gB);
 
 
   // Vorschau: nächstes Spiel (unter Toreingabe)
@@ -1719,6 +1734,7 @@ function renderGuidedMatch(){
         : `<span class="team-cell right"><span class="team-name">${escapeHtml(nRightName)}</span></span>`;
 
       nextVs.innerHTML = `${nAhtml} <span class="vs-mid">vs</span> ${nBhtml}`;
+      nextMeta.textContent = `Spiel ${currentMatchIndex+2} von ${matches.length} • ${next.round}`;
 
       nextWrap.style.display = "block";
     }else{
@@ -1740,10 +1756,10 @@ function updateScore(matchId, side, value){
   if(!m) return;
 
   const v=(value===""?0:parseInt(value,10));
-  if(side==="A") m.gA = Number.isFinite(v)?v:0;
-  else m.gB = Number.isFinite(v)?v:0;
+  if(side==="A") m.gA = Number.isFinite(v)?Math.max(0,v):0;
+  else m.gB = Number.isFinite(v)?Math.max(0,v):0;
 
-  m.played=true;
+  // Toreingabe verändert den Status OFFEN/GESPIELT nicht.
 
   if(curMatch() && curMatch().id===matchId) renderGuidedMatch();
   updateTable();
@@ -1753,9 +1769,11 @@ function updateScore(matchId, side, value){
 function setGuidedScore(side, value){
   const m=curMatch(); if(!m) return;
   const v=(value===""?0:parseInt(value,10));
-  if(side==="A") m.gA = Number.isFinite(v)?v:0;
-  else m.gB = Number.isFinite(v)?v:0;
-  m.played=true;
+  const actualSide = m.swapDisplay ? (side === "A" ? "B" : "A") : side;
+  if(actualSide==="A") m.gA = Number.isFinite(v)?Math.max(0,v):0;
+  else m.gB = Number.isFinite(v)?Math.max(0,v):0;
+  // Live-Wertung: schon beim ersten eingegebenen Tor mitzählen.
+  m.liveStarted=true;
   renderMatches();
   renderGuidedMatch();
   updateTable();
@@ -1782,7 +1800,7 @@ function updateTable(){
   }));
 
   matches.forEach(m=>{
-    if(!m.played) return;
+    if(!m.played && !m.liveStarted) return;
     const A=stats[m.A], B=stats[m.B];
     A.sp++; B.sp++;
     A.tPlus+=m.gA; A.tMinus+=m.gB;
