@@ -826,6 +826,34 @@ td.match-col .kick{margin:0 6px 0 0}
 #matchesList .score-readonly{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;background:#fff;cursor:default;user-select:text;}
 #matchesList .match-status{display:inline-flex;align-items:center;justify-content:center;cursor:default;}
 </style>
+
+<style>
+#playersCard .player-tools{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:12px 0}
+#playersCard .player-tools input{max-width:230px}
+#playersCard .player-grid{display:grid;grid-template-columns:minmax(135px,2fr) 58px 75px minmax(100px,1fr) minmax(100px,1fr) 38px;gap:7px;align-items:center}
+#playersCard .player-grid input,#playersCard .player-grid select{width:100%;min-width:0;padding:8px 4px;border:1px solid #cbd5e1;border-radius:8px;background:white;color:#14263d}
+#playersCard .player-grid .small-check{width:20px;height:20px;justify-self:center}
+#playersCard .player-grid .remove-player{padding:6px 2px;color:#a12222;border:0;background:transparent;font-weight:800}
+#playersCard .player-grid .player-head{font-size:.78rem;font-weight:800;color:#475569}
+#playersCard .player-grid .guest{font-size:.7rem;color:#0c65a0;font-weight:800}
+#playersCard .team-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:15px}
+#playersCard .team-result{border:1px solid #b7d2ed;background:#f3f8ff;border-radius:13px;padding:12px}
+#playersCard .team-result h3{margin:0 0 7px;color:#12446c}
+#playersCard .team-result ul{margin:0;padding-left:18px}
+#playersCard .muted{color:#5d6a78;font-size:.9rem}
+@media(max-width:620px){
+ #playersCard .player-grid{grid-template-columns:minmax(108px,1.7fr) 42px 52px minmax(70px,1fr) minmax(70px,1fr) 24px;gap:3px}
+ #playersCard .player-grid input,#playersCard .player-grid select{font-size:12px;padding:7px 2px}
+ #playersCard .player-grid .player-head{font-size:10px}
+}
+#playersCard[hidden]{display:none!important}
+#playersCard.results-only > p, #playersCard.results-only > .player-tools, #playersCard.results-only > .player-grid, #playersCard.results-only > #playerSummary{display:none!important}
+#playersCard.results-only #applyTeamNamesBtn{display:inline-block!important}
+#playersCard.results-only .player-heading h2{font-size:0}
+#playersCard.results-only .player-heading h2::after{content:"⚽ Faire Mannschaftseinteilung";font-size:1.3rem}
+.player-open-actions{margin:12px 0}
+.player-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+</style>
 </head>
 
 <body>
@@ -884,11 +912,28 @@ td.match-col .kick{margin:0 6px 0 0}
 
 </div>
 
+      <div class="player-open-actions" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button type="button" class="btn secondary" id="openPlayersBtn" aria-expanded="false" aria-controls="playersCard">⚽ Zu den Spielern</button><label for="splitTeamCount"><strong>Teams:</strong></label><select id="splitTeamCount" style="width:auto"><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option><option value="6">6</option></select><button type="button" class="btn secondary" id="splitPlayersBtn">🔀 Teams fair aufteilen</button></div>
       <div class="subhead">Mannschaftsnamen</div>
       <div id="teamInputs" class="team-grid"></div>
     </div>
 
-    <div class="card guided-card" id="guidedCard">
+    
+<div class="card" id="playersCard" hidden>
+<div class="player-heading"><h2>⚽ Spieler &amp; faire Mannschaften</h2><button type="button" class="btn light" id="closePlayersBtn">✕ Schließen</button></div>
+<p class="muted">Stammspieler bleiben gespeichert. Gastspieler können ergänzt werden. Stärke: 1 = Anfänger, 5 = sehr stark. Bis zu zwei Positionen pro Spieler.</p>
+<div class="player-tools">
+<input id="newGuestName" type="text" placeholder="Name des Gastspielers" aria-label="Name des Gastspielers">
+<button type="button" class="btn secondary" id="addGuestBtn">+ Gastspieler hinzufügen</button>
+</div>
+<div class="player-grid" id="playerGrid"></div>
+<div class="player-tools">
+<button type="button" class="btn light" id="applyTeamNamesBtn" style="display:none">Teamnamen in Spielplan übernehmen</button>
+</div>
+<div class="muted" id="playerSummary"></div>
+<div class="team-results" id="teamResults" aria-live="polite"></div>
+</div>
+
+<div class="card guided-card" id="guidedCard">
       <div class="guided-top">
         <div style="font-weight:900;font-size:1.1rem">Aktuelles Spiel</div>
         <div class="meta" id="guidedMeta"></div>
@@ -1913,5 +1958,128 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
   });
 }
 </script>
+
+<script>
+(function(){
+'use strict';
+const KEY='usv_u14_spieler_teams_v1';
+const initialPlayers=["Sorger Maximilian", "Schadler Augustin", "Krispel Peter", "Zettel Thomas Johann", "Kollienz Josef", "Christandl Sebastian", "Zach Sebastian", "Reicht Frederick", "Platzer Julian", "Weber Florian", "Wolfsche Marvin Christoph", "Schönberger Philipp", "Weiland Luca", "Schneider Mario Daniel", "Prall Moritz", "Schönberger Marie", "Lammer Conny", "Kerschenbauer Janick"];
+const POS=['','Torwart','Verteidigung','Mittelfeld','Sturm','Allrounder'];
+let roster=[], lastTeams=[];
+function safe(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function init(){
+ const panel=document.getElementById('playersCard');
+ const opener=document.getElementById('openPlayersBtn');
+ const closer=document.getElementById('closePlayersBtn');
+ function togglePlayers(show){if(show)panel.classList.remove('results-only');panel.hidden=!show;opener.setAttribute('aria-expanded',String(show));if(show){panel.scrollIntoView({behavior:'smooth',block:'start'});}else{opener.scrollIntoView({behavior:'smooth',block:'center'});}}
+ opener.addEventListener('click',()=>togglePlayers(panel.hidden));
+ closer.addEventListener('click',()=>togglePlayers(false));
+ try{const s=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(s)&&s.length)roster=s;}catch(e){}
+ if(!roster.length)roster=initialPlayers.map((name,i)=>({id:'core'+i,name,guest:false,present:true,rating:3,pos1:'',pos2:''}));
+ const known=new Set(roster.filter(p=>!p.guest).map(p=>p.name));
+ initialPlayers.forEach((name,i)=>{if(!known.has(name))roster.push({id:'core'+i,name,guest:false,present:true,rating:3,pos1:'',pos2:''});});
+ document.getElementById('addGuestBtn').addEventListener('click',addGuest);
+ document.getElementById('newGuestName').addEventListener('keydown',e=>{if(e.key==='Enter')addGuest();});
+ document.getElementById('splitPlayersBtn').addEventListener('click',split);
+ document.getElementById('applyTeamNamesBtn').addEventListener('click',applyNames);
+ document.getElementById('playerGrid').addEventListener('change',changePlayer);
+ document.getElementById('playerGrid').addEventListener('click',removePlayer);
+ render();
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(roster));}catch(e){alert('Spielerdaten konnten nicht gespeichert werden.');}}
+function opts(selected){return POS.map(p=>'<option value="'+safe(p)+'"'+(selected===p?' selected':'')+'>'+(p||'–')+'</option>').join('');}
+function render(){
+ const el=document.getElementById('playerGrid');
+ el.innerHTML='<div class="player-head">Spieler</div><div class="player-head">Da</div><div class="player-head">Stärke</div><div class="player-head">Position 1</div><div class="player-head">Position 2</div><div class="player-head">✕</div>'+
+ roster.map((p,i)=>'<div style="min-width:0;overflow-wrap:anywhere;font-size:.88rem">'+safe(p.name)+(p.guest?' <span class="guest">(Gast)</span>':'')+'</div>'+
+ '<input class="small-check" type="checkbox" data-i="'+i+'" data-field="present" aria-label="'+safe(p.name)+' anwesend" '+(p.present?'checked':'')+'>'+
+ '<select data-i="'+i+'" data-field="rating" aria-label="Spielstärke '+safe(p.name)+'">'+[1,2,3,4,5].map(n=>'<option value="'+n+'"'+(Number(p.rating)===n?' selected':'')+'>'+n+'</option>').join('')+'</select>'+
+ '<select data-i="'+i+'" data-field="pos1" aria-label="Erste Position '+safe(p.name)+'">'+opts(p.pos1)+'</select>'+
+ '<select data-i="'+i+'" data-field="pos2" aria-label="Zweite Position '+safe(p.name)+'">'+opts(p.pos2)+'</select>'+
+ (p.guest?'<button class="remove-player" type="button" data-remove="'+i+'" aria-label="Gastspieler entfernen">✕</button>':'<span></span>')
+ ).join('');
+ document.getElementById('playerSummary').textContent=roster.filter(p=>p.present).length+' anwesend · '+roster.filter(p=>p.guest).length+' Gastspieler · '+roster.length+' Spieler gesamt';
+}
+function changePlayer(e){
+ const i=Number(e.target.dataset.i),f=e.target.dataset.field;
+ if(!Number.isInteger(i)||!roster[i]||!['present','rating','pos1','pos2'].includes(f))return;
+ roster[i][f]=f==='present'?e.target.checked:f==='rating'?Number(e.target.value):e.target.value;
+ if(f==='pos1'&&roster[i].pos2===roster[i].pos1)roster[i].pos2='';
+ if(f==='pos2'&&roster[i].pos1===roster[i].pos2)roster[i].pos2='';
+ save();render();
+}
+function removePlayer(e){const i=e.target.dataset.remove;if(i===undefined)return;if(roster[Number(i)]?.guest&&confirm('Gastspieler entfernen?')){roster.splice(Number(i),1);save();render();}}
+function addGuest(){
+ const inp=document.getElementById('newGuestName'),name=inp.value.trim();
+ if(!name){inp.focus();return;}
+ if(roster.some(p=>p.name.toLocaleLowerCase()===name.toLocaleLowerCase())){alert('Dieser Name ist bereits vorhanden.');return;}
+ roster.push({id:'guest'+Date.now()+Math.random(),name,guest:true,present:true,rating:3,pos1:'',pos2:''});
+ inp.value='';save();render();
+}
+function scoreTeams(teams){
+ const avg=teams.map(t=>t.reduce((s,p)=>s+p.rating,0)/Math.max(1,t.length));
+ const spread=Math.max(...avg)-Math.min(...avg);
+ let penalty=spread*35;
+ const total=teams.map(t=>t.reduce((s,p)=>s+p.rating,0));
+ penalty+=(Math.max(...total)-Math.min(...total))*2;
+ const counts=teams.map(t=>t.length);
+ penalty+=(Math.max(...counts)-Math.min(...counts))*100;
+ for(const pos of ['Torwart','Verteidigung','Mittelfeld','Sturm']){
+  const c=teams.map(t=>t.filter(p=>p.pos1===pos||p.pos2===pos).length);
+  const available=c.reduce((a,b)=>a+b,0);
+  if(available>=teams.length)penalty+=(Math.max(...c)-Math.min(...c))*(pos==='Torwart'?18:6);
+ }
+ return penalty;
+}
+function split(){
+ const active=roster.filter(p=>p.present).map(p=>({...p,rating:Math.min(5,Math.max(1,Number(p.rating)||3))}));
+ const n=Number(document.getElementById('splitTeamCount').value);
+ if(active.length<n){alert('Es müssen mindestens '+n+' Spieler anwesend sein.');return;}
+ let best=null,bestScore=Infinity;
+ // Multiple random starts + pair swaps, preserving team sizes
+ for(let trial=0;trial<100;trial++){
+  const shuffled=[...active].sort(()=>Math.random()-.5);
+  const teams=Array.from({length:n},()=>[]);
+  shuffled.forEach((p,i)=>teams[i%n].push(p));
+  let score=scoreTeams(teams);
+  for(let round=0;round<65;round++){
+   let improved=false;
+   for(let k=0;k<55;k++){
+    const a=Math.floor(Math.random()*n),b=(a+1+Math.floor(Math.random()*(n-1)))%n;
+    const ia=Math.floor(Math.random()*teams[a].length),ib=Math.floor(Math.random()*teams[b].length);
+    [teams[a][ia],teams[b][ib]]=[teams[b][ib],teams[a][ia]];
+    const candidate=scoreTeams(teams);
+    if(candidate+0.00001<score){score=candidate;improved=true;}
+    else [teams[a][ia],teams[b][ib]]=[teams[b][ib],teams[a][ia]];
+   }
+   if(!improved)break;
+  }
+  if(score<bestScore){bestScore=score;best=teams.map(t=>[...t]);}
+ }
+ lastTeams=best;
+ const out=document.getElementById('teamResults');
+ out.innerHTML=best.map((t,i)=>{
+ return '<div class="team-result"><h3>Team '+(i+1)+'</h3><div class="muted">'+t.length+' Spieler</div><ul>'+
+ t.map(p=>'<li>'+safe(p.name)+(p.guest?' (Gast)':'')+'</li>').join('')+'</ul></div>';
+ }).join('');
+ document.getElementById('applyTeamNamesBtn').style.display='';
+ const panel=document.getElementById('playersCard');
+ panel.classList.add('results-only');
+ panel.hidden=false;
+ const opener=document.getElementById('openPlayersBtn');if(opener)opener.setAttribute('aria-expanded','true');
+ out.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function applyNames(){
+ if(!lastTeams.length)return;
+ const current=document.getElementById('teamCount');
+ if(current){current.value=String(lastTeams.length);current.dispatchEvent(new Event('change',{bubbles:true}));}
+ const inputs=document.querySelectorAll('#teamInputs input');
+ lastTeams.forEach((t,i)=>{if(inputs[i]){inputs[i].value='Team '+(i+1);inputs[i].dispatchEvent(new Event('input',{bubbles:true}));inputs[i].dispatchEvent(new Event('change',{bubbles:true}));}});
+ alert('Die Teamnamen wurden übernommen. Die Spielerlisten stehen weiterhin unter „Spieler & Teams“.');
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
 </body>
 </html>
